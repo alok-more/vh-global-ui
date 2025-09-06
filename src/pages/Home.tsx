@@ -1,9 +1,16 @@
-import React from 'react';
-import { ArrowRight, Leaf, Droplets, Zap, Award, Users, Globe } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { useMainCategories, useProducts } from '../hooks/useProducts';
-import ProductCard from '../components/ProductCard';
-import LoadingSpinner from '../components/LoadingSpinner';
+import {
+  ArrowRight,
+  Leaf,
+  Droplets,
+  Zap,
+  Award,
+  Users,
+  Globe,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import { useMainCategories, useProducts } from "../hooks/useProducts";
+import ProductCard from "../components/ProductCard";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Home = () => {
   const { data: mainCategoriesData } = useMainCategories();
@@ -14,14 +21,15 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative h-screen bg-gradient-to-br from-emerald-900 via-emerald-800 to-cyan-900 flex items-center">
         <div className="absolute inset-0 bg-black/30"></div>
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: "url('https://images.pexels.com/photos/1078736/pexels-photo-1078736.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop')"
+            backgroundImage:
+              "url('https://images.pexels.com/photos/1078736/pexels-photo-1078736.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop')",
           }}
         ></div>
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-900/70 to-transparent"></div>
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white">
           <div className="max-w-2xl">
             <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
@@ -29,11 +37,11 @@ const Home = () => {
               <span className="text-cyan-300 block">Excellence</span>
             </h1>
             <p className="text-xl mb-8 text-gray-200 leading-relaxed">
-              Premium aquarium plants, professional substrates, and complete CO2 systems 
-              for creating breathtaking underwater landscapes.
+              Premium aquarium plants, professional substrates, and complete CO2
+              systems for creating breathtaking underwater landscapes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link 
+              <Link
                 to="/products"
                 className="bg-emerald-600 hover:bg-emerald-500 px-8 py-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center group"
               >
@@ -51,43 +59,51 @@ const Home = () => {
       {/* Features Section */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Why Choose VH Global Trader</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Over 55 years of expertise in aquarium technology and plant cultivation
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-heading font-black text-gray-900 mb-3">
+              Why Choose VH Global Trader
+            </h2>
+            <p className="text-xl text-gray-500 max-w-3xl mx-auto">
+              Over 55 years of expertise in aquarium technology and plant
+              cultivation
             </p>
           </div>
-
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="w-16 h-16 bg-emerald-100 rounded-lg flex items-center justify-center mb-6">
-                <Leaf className="w-8 h-8 text-emerald-600" />
+            {[
+              {
+                icon: <Leaf className="w-8 h-8 text-emerald-600" />,
+                bg: "bg-emerald-100",
+                title: "Premium Plants",
+                desc: "Carefully cultivated aquarium plants with guaranteed quality and vitality for stunning underwater gardens.",
+              },
+              {
+                icon: <Droplets className="w-8 h-8 text-cyan-600" />,
+                bg: "bg-cyan-100",
+                title: "Complete Systems",
+                desc: "Professional CO2 systems, filtration, and water treatment solutions for optimal aquarium conditions.",
+              },
+              {
+                icon: <Zap className="w-8 h-8 text-yellow-600" />,
+                bg: "bg-yellow-100",
+                title: "Innovation",
+                desc: "Cutting-edge technology and research-backed solutions for the modern aquascaping enthusiast.",
+              },
+            ].map((feature, idx) => (
+              <div
+                key={feature.title}
+                className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+              >
+                <div
+                  className={`w-16 h-16 ${feature.bg} rounded-lg flex items-center justify-center mb-6`}
+                >
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-bold mb-4 text-gray-900">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-500 leading-relaxed">{feature.desc}</p>
               </div>
-              <h3 className="text-xl font-bold mb-4 text-gray-900">Premium Plants</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Carefully cultivated aquarium plants with guaranteed quality and vitality for stunning underwater gardens.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="w-16 h-16 bg-cyan-100 rounded-lg flex items-center justify-center mb-6">
-                <Droplets className="w-8 h-8 text-cyan-600" />
-              </div>
-              <h3 className="text-xl font-bold mb-4 text-gray-900">Complete Systems</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Professional CO2 systems, filtration, and water treatment solutions for optimal aquarium conditions.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="w-16 h-16 bg-yellow-100 rounded-lg flex items-center justify-center mb-6">
-                <Zap className="w-8 h-8 text-yellow-600" />
-              </div>
-              <h3 className="text-xl font-bold mb-4 text-gray-900">Innovation</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Cutting-edge technology and research-backed solutions for the modern aquascaping enthusiast.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -95,13 +111,17 @@ const Home = () => {
       {/* Product Categories */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Product Categories</h2>
-            <p className="text-xl text-gray-600">Everything you need for professional aquascaping</p>
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-heading font-extrabold text-gray-900 mb-3">
+              Product Categories
+            </h2>
+            <p className="text-xl text-gray-500">
+              Everything you need for professional aquascaping
+            </p>
           </div>
 
           {mainCategoriesData?.data ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
               {mainCategoriesData.data.slice(0, 6).map((category, index) => (
                 <Link
                   key={category.productMainCategoryId}
@@ -109,17 +129,21 @@ const Home = () => {
                   className="group cursor-pointer"
                 >
                   <div className="relative overflow-hidden rounded-xl mb-4">
-                    <img 
-                      src={'/images/nursary-product.png'}
+                    <img
+                      src={`/images/${category.name
+                        .toLowerCase()
+                        .replace(/ & /g, "_")
+                        .replace(/ /g, "_")}.webp`}
                       alt={category.name}
                       className="w-full h-[420px] object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    <div className="absolute inset-0 bg-emerald-600/20 group-hover:bg-emerald-600/30 transition-colors"></div>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-emerald-700 transition-colors">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-emerald-700 transition-colors">
                     {category.name}
                   </h3>
-                  <p className="text-gray-600 text-sm">{category.shortDescription}</p>
+                  <p className="text-gray-500 text-sm">
+                    {category.shortDescription}
+                  </p>
                 </Link>
               ))}
             </div>
@@ -140,39 +164,39 @@ const Home = () => {
                 55 Years of
                 <span className="text-emerald-700 block">Innovation</span>
               </h2>
-              <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                Since 1966, VH Global Trader has been at the forefront of aquarium technology, 
-                developing innovative solutions that help aquascapers create and maintain 
-                breathtaking underwater worlds.
+              <p className="text-lg text-gray-500 mb-8 leading-relaxed">
+                Since 1966, VH Global Trader has been at the forefront of
+                aquarium technology, developing innovative solutions that help
+                aquascapers create and maintain breathtaking underwater worlds.
               </p>
-              
+
               <div className="grid sm:grid-cols-3 gap-6 mb-8">
                 <div className="text-center">
                   <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                     <Award className="w-6 h-6 text-white" />
                   </div>
                   <div className="font-bold text-2xl text-emerald-600">55+</div>
-                  <div className="text-sm text-gray-600">Years Experience</div>
+                  <div className="text-sm text-gray-500">Years Experience</div>
                 </div>
-                
+
                 <div className="text-center">
                   <div className="w-12 h-12 bg-cyan-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                     <Users className="w-6 h-6 text-white" />
                   </div>
                   <div className="font-bold text-2xl text-cyan-600">500K+</div>
-                  <div className="text-sm text-gray-600">Happy Customers</div>
+                  <div className="text-sm text-gray-500">Happy Customers</div>
                 </div>
-                
+
                 <div className="text-center">
                   <div className="w-12 h-12 bg-yellow-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                     <Globe className="w-6 h-6 text-white" />
                   </div>
                   <div className="font-bold text-2xl text-yellow-600">60+</div>
-                  <div className="text-sm text-gray-600">Countries</div>
+                  <div className="text-sm text-gray-500">Countries</div>
                 </div>
               </div>
 
-              <Link 
+              <Link
                 to="/company"
                 className="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors group"
               >
@@ -182,7 +206,7 @@ const Home = () => {
             </div>
 
             <div className="relative">
-              <img 
+              <img
                 src="https://images.pexels.com/photos/3212513/pexels-photo-3212513.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop"
                 alt="Professional Aquascaping"
                 className="w-full rounded-2xl shadow-2xl"
@@ -197,14 +221,18 @@ const Home = () => {
       {/* Featured Products */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Featured Products</h2>
-            <p className="text-xl text-gray-600">Our most popular aquascaping solutions</p>
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold font-heading text-gray-900 mb-3">
+              Featured Products
+            </h2>
+            <p className="text-xl text-gray-500">
+              Our most popular aquascaping solutions
+            </p>
           </div>
 
           {featuredProductsData?.data?.content ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredProductsData.data.content.slice(0, 6).map(product => (
+              {featuredProductsData.data.content.slice(0, 6).map((product) => (
                 <ProductCard
                   key={product.productId}
                   product={product}
@@ -219,7 +247,7 @@ const Home = () => {
           )}
 
           <div className="text-center mt-12">
-            <Link 
+            <Link
               to="/products"
               className="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg font-semibold transition-colors group"
             >
@@ -231,16 +259,17 @@ const Home = () => {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-16 bg-emerald-800">
+      <section className="py-16 bg-emerald-800 pb-32 -mb-[50px] relative z-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Stay Updated</h2>
           <p className="text-emerald-100 mb-8 max-w-2xl mx-auto">
-            Get the latest aquascaping tips, product updates, and exclusive offers delivered to your inbox.
+            Get the latest aquascaping tips, product updates, and exclusive
+            offers delivered to your inbox.
           </p>
-          
+
           <div className="max-w-md mx-auto flex gap-4">
-            <input 
-              type="email" 
+            <input
+              type="email"
               placeholder="Enter your email"
               className="flex-1 px-4 py-3 rounded-lg border border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-300"
             />
