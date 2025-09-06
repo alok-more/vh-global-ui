@@ -7,6 +7,7 @@ import {
   Youtube,
   Send,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -15,17 +16,16 @@ const Footer = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="lg:col-span-1">
-            <div className="flex items-center space-x-2 mb-6">
-              <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">VH</span>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold">VH Global Trader</h3>
-                <p className="text-xs text-gray-400 uppercase tracking-wide">
-                  Aquascaping Excellence
-                </p>
-              </div>
-            </div>
+            {/* <div className="bg-white text-center flex items-center justify-center mb-2 py-2 rounded-[50px]"> */}
+            <Link to="/" className="flex items-center space-x-2">
+              <img
+                src="/images/logo.webp"
+                alt="VH Global Logo"
+                className="h-16 w-auto"
+                fetchPriority="high"
+              />
+            </Link>
+            {/* </div> */}
             <p className="text-gray-300 mb-6 leading-relaxed">
               Your trusted partner for premium aquascaping solutions since 1966.
               Creating underwater masterpieces with German engineering

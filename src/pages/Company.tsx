@@ -1,4 +1,3 @@
-import React from "react";
 import { Award, Users, Globe, Heart, Leaf, Lightbulb } from "lucide-react";
 
 const Company = () => {
@@ -6,20 +5,20 @@ const Company = () => {
     {
       icon: <Heart className="w-8 h-8 text-emerald-600" />,
       bg: "bg-emerald-100",
-      title: "Passion",
-      desc: "Our love for aquatic life and aquascaping drives every product we create and every service we provide.",
+      title: "Quality",
+      desc: "We deliver premium nursery and farming plants with export-quality standards, ensuring freshness and health in every plant.",
     },
     {
       icon: <Leaf className="w-8 h-8 text-cyan-600" />,
       bg: "bg-cyan-100",
       title: "Sustainability",
-      desc: "We're committed to environmental responsibility in all our processes, from production to packaging.",
+      desc: "We're committed to environmental responsibility, promoting sustainable greenery in cities and rural communities.",
     },
     {
       icon: <Lightbulb className="w-8 h-8 text-yellow-600" />,
       bg: "bg-yellow-100",
-      title: "Innovation",
-      desc: "Continuous research and development ensure we stay at the forefront of aquarium technology.",
+      title: "Trust",
+      desc: "As your trusted partner in growing greener futures, we provide expert care and guidance for all your plant needs.",
     },
   ];
 
@@ -27,28 +26,28 @@ const Company = () => {
     {
       icon: <Award className="w-8 h-8 text-white" />,
       bg: "bg-emerald-600",
-      value: "55+",
+      value: "Premium",
       color: "text-emerald-600",
-      label: "Years of Excellence",
+      label: "Export Quality Plants",
     },
     {
       icon: <Users className="w-8 h-8 text-white" />,
       bg: "bg-cyan-600",
-      value: "500K+",
+      value: "1000+",
       color: "text-cyan-600",
-      label: "Satisfied Customers",
+      label: "Happy Customers",
     },
     {
       icon: <Globe className="w-8 h-8 text-white" />,
       bg: "bg-yellow-600",
-      value: "60+",
+      value: "Global",
       color: "text-yellow-600",
-      label: "Countries Served",
+      label: "International Markets",
     },
     {
       icon: <Leaf className="w-8 h-8 text-white" />,
       bg: "bg-green-600",
-      value: "200+",
+      value: "500+",
       color: "text-green-600",
       label: "Plant Varieties",
     },
@@ -58,23 +57,23 @@ const Company = () => {
     {
       img: "https://images.pexels.com/photos/3212513/pexels-photo-3212513.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&fit=crop",
       alt: "CEO",
-      name: "Dr. Marcus Weber",
+      name: "Rajesh Sharma",
       role: "Chief Executive Officer",
-      desc: "Leading VH Global Trader's global expansion and innovation initiatives with 25+ years of industry experience.",
+      desc: "Leading VHN Global's mission to connect India's green treasures with the world, with over 20 years in agriculture and exports.",
     },
     {
       img: "https://images.pexels.com/photos/1078736/pexels-photo-1078736.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&fit=crop",
-      alt: "CTO",
-      name: "Dr. Sarah Chen",
-      role: "Chief Technology Officer",
-      desc: "Spearheading R&D efforts and breakthrough innovations in aquarium technology and plant cultivation.",
+      alt: "Head of Operations",
+      name: "Priya Patel",
+      role: "Head of Operations",
+      desc: "Ensuring quality control and sustainable farming practices across our nurseries and export operations.",
     },
     {
       img: "https://images.pexels.com/photos/1123982/pexels-photo-1123982.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&fit=crop",
-      alt: "Head of Operations",
-      name: "Michael Schmidt",
-      role: "Head of Operations",
-      desc: "Ensuring quality control and efficient global distribution of our premium product line.",
+      alt: "Head of International Sales",
+      name: "Vikram Singh",
+      role: "Head of International Sales",
+      desc: "Expanding VHN Global's reach across international markets while maintaining our commitment to quality and sustainability.",
     },
   ];
 
@@ -86,16 +85,19 @@ const Company = () => {
           className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{
             backgroundImage:
-              "url('https://images.pexels.com/photos/3212513/pexels-photo-3212513.jpeg?auto=compress&cs=tinysrgb&w=1920&h=600&fit=crop')",
+              "url('https://images.pexels.com/photos/4207892/pexels-photo-4207892.jpeg?auto=compress&cs=tinysrgb&w=1920&h=600&fit=crop')",
           }}
         ></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl font-bold text-white mb-6">
-            About VH Global Trader
+            About VHN Global
           </h1>
-          <p className="text-xl text-emerald-100 max-w-3xl mx-auto">
-            Leading the aquascaping revolution for over five decades with
-            innovative products and unwavering commitment to quality.
+          <p className="text-xl text-emerald-100 max-w-3xl mx-auto mb-4">
+            VHN Global delivers premium nursery and farming plants across India
+            and international markets—making greenery accessible everywhere.
+          </p>
+          <p className="text-lg text-emerald-200 font-medium">
+            "Growing Green, Connecting Worlds"
           </p>
         </div>
       </section>
@@ -110,31 +112,32 @@ const Company = () => {
               </h2>
               <div className="space-y-6 text-gray-500 text-lg leading-relaxed">
                 <p>
-                  Founded in 1966 by Ludwig VH Global Trader, our company began
-                  as a small aquarium store in Vinningen, Germany. What started
-                  as a passion for aquatic life has evolved into a global leader
-                  in aquascaping technology and innovation.
+                  At VHN Global, we believe greenery is more than just
+                  plants—it's a way of life. From homes and offices to farms and
+                  landscapes, our nursery plants bring freshness, beauty, and
+                  sustainability to every space.
                 </p>
                 <p>
-                  Today, VH Global Trader is synonymous with quality and
-                  innovation in the aquarium industry. Our research and
-                  development team continuously works to create products that
-                  not only meet but exceed the expectations of aquascaping
-                  enthusiasts worldwide.
+                  We specialize in nursery and farming plants, delivering across
+                  India and to international markets with export-quality
+                  standards. Whether you're looking for ornamental plants to
+                  enhance your home, fruit-bearing trees for your farm, or
+                  exotic varieties for landscaping projects, VHN Global is your
+                  trusted partner in growing greener futures.
                 </p>
                 <p>
-                  From our state-of-the-art facility in Germany, we supply
-                  aquarium professionals and hobbyists in over 60 countries with
-                  premium plants, substrates, fertilizers, and complete system
-                  solutions.
+                  Our mission is simple: Promote sustainable greenery in cities
+                  and rural communities, deliver healthy, high-quality plants
+                  with expert care, and support farmers, gardeners, and plant
+                  lovers with guidance and premium products.
                 </p>
               </div>
             </div>
 
             <div className="relative">
               <img
-                src="https://images.pexels.com/photos/1426718/pexels-photo-1426718.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop"
-                alt="VH Global Trader Facility"
+                src="https://images.pexels.com/photos/4207892/pexels-photo-4207892.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop"
+                alt="VHN Global Nursery"
                 className="w-full rounded-2xl shadow-2xl"
               />
             </div>

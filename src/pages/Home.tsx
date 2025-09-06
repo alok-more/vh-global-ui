@@ -14,7 +14,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 
 const Home = () => {
   const { data: mainCategoriesData } = useMainCategories();
-  const { data: featuredProductsData } = useProducts({ page: 0, pageSize: 6 });
+  const { data: featuredProductsData } = useProducts({ page: 0, pageSize: 8 });
 
   return (
     <div>
@@ -32,13 +32,17 @@ const Home = () => {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white">
           <div className="max-w-2xl">
-            <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+            <h3 className="text-lg font-semibold text-white/80 mb-1 tracking-wide">
+              Growing Green, Connecting Worlds
+            </h3>
+            <h1 className="text-5xl lg:text-7xl font-bold mb-4 leading-tight tracking-tight">
               Aquascaping
               <span className="text-cyan-300 block">Excellence</span>
             </h1>
-            <p className="text-xl mb-8 text-gray-200 leading-relaxed">
-              Premium aquarium plants, professional substrates, and complete CO2
-              systems for creating breathtaking underwater landscapes.
+            <p className="text-lg mb-8 text-gray-200 leading-relaxed">
+              At VHN Global, we bring you premium nursery and farming
+              plants—delivered across India and worldwide—making greenery
+              accessible, sustainable, and beautiful for every space.{" "}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
@@ -121,21 +125,21 @@ const Home = () => {
           </div>
 
           {mainCategoriesData?.data ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
               {mainCategoriesData.data.slice(0, 6).map((category, index) => (
                 <Link
                   key={category.productMainCategoryId}
                   to={`/products?category=${category.productMainCategoryId}`}
                   className="group cursor-pointer"
                 >
-                  <div className="relative overflow-hidden rounded-xl mb-4">
+                  <div className="relative overflow-hidden mx-auto rounded-xl mb-4">
                     <img
                       src={`/images/${category.name
                         .toLowerCase()
                         .replace(/ & /g, "_")
                         .replace(/ /g, "_")}.webp`}
                       alt={category.name}
-                      className="w-full h-[420px] object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-[370px] object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-emerald-700 transition-colors">
@@ -231,8 +235,8 @@ const Home = () => {
           </div>
 
           {featuredProductsData?.data?.content ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredProductsData.data.content.slice(0, 6).map((product) => (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredProductsData.data.content.slice(0, 8).map((product) => (
                 <ProductCard
                   key={product.productId}
                   product={product}

@@ -65,7 +65,7 @@ const Header = () => {
   }, [hoverTimeout, categoriesTimeout]);
 
   return (
-    <header className="bg-white/40 shadow-sm sticky top-0 z-40 backdrop-blur-md">
+    <header className="bg-white/40 shadow-sm relative z-40 backdrop-blur-md">
       {/* Top Bar */}
       {/* <div className="bg-emerald-800 text-white py-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center text-sm">
@@ -86,22 +86,23 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-12 h-12 bg-emerald-700 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">VH</span>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-emerald-800">
-                VH Global Trader
-              </h1>
-              <p className="text-xs text-gray-500 uppercase tracking-wide">
-                Aquascaping Excellence
-              </p>
-            </div>
+          <Link
+            to="/"
+            className="flex items-start justify-start flex-col space-x-2"
+          >
+            <img
+              src="/images/logo.webp"
+              alt="VH Global Logo"
+              className="h-16 w-auto ml-1"
+              fetchPriority="high"
+            />
+            <h5 className="text-gray-600 text-sm mt-1 tracking-wide">
+              Growing Green, Connecting Worlds
+            </h5>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-8 md:space-x-16">
             <div
               className="relative"
               onMouseEnter={handleMegaMenuEnter}
@@ -109,7 +110,7 @@ const Header = () => {
             >
               <Link
                 to="/products"
-                className="text-gray-700 hover:text-emerald-700 font-medium transition-colors flex items-center py-2"
+                className="text-gray-500 hover:text-emerald-700 font-bold transition-colors flex items-center py-2"
               >
                 Products
               </Link>
@@ -119,19 +120,19 @@ const Header = () => {
               onMouseEnter={handleCategoriesMenuEnter}
               onMouseLeave={handleCategoriesMenuLeave}
             >
-              <span className="text-gray-700 hover:text-emerald-700 font-medium cursor-pointer transition-colors py-2 block">
+              <span className="text-gray-500 hover:text-emerald-700 font-bold cursor-pointer transition-colors py-2 block">
                 Categories
               </span>
             </div> */}
             <Link
               to="/company"
-              className="text-gray-700 hover:text-emerald-700 font-medium cursor-pointer transition-colors py-2 block"
+              className="text-gray-500 hover:text-emerald-700 font-bold cursor-pointer transition-colors py-2 block"
             >
               Company
             </Link>
             <Link
               to="/contact"
-              className="text-gray-700 hover:text-emerald-700 font-medium cursor-pointer transition-colors py-2 block"
+              className="text-gray-500 hover:text-emerald-700 font-bold cursor-pointer transition-colors py-2 block"
             >
               Contact
             </Link>
@@ -243,12 +244,12 @@ const Header = () => {
             <nav className="flex flex-col space-y-4">
               <Link
                 to="/products"
-                className="text-gray-700 hover:text-emerald-700 font-medium transition-colors"
+                className="text-gray-500 hover:text-emerald-700 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Products
               </Link>
-              {/* <span className="text-gray-700 font-medium">Categories</span>
+              {/* <span className="text-gray-500 font-medium">Categories</span>
               <div className="ml-4 space-y-2">
                 {mainCategoriesData?.data?.slice(0, 4).map((category) => (
                   <Link
@@ -263,14 +264,14 @@ const Header = () => {
               </div> */}
               <Link
                 to="/company"
-                className="text-gray-700 hover:text-emerald-700 font-medium transition-colors"
+                className="text-gray-500 hover:text-emerald-700 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Company
               </Link>
               <Link
                 to="/contact"
-                className="text-gray-700 hover:text-emerald-700 font-medium transition-colors"
+                className="text-gray-500 hover:text-emerald-700 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact
