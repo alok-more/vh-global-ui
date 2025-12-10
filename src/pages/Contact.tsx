@@ -5,20 +5,41 @@ const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    contact: "",
     subject: "",
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log("Form submitted:", formData);
+
+    const appsScriptUrl = import.meta.env.VITE_APP_SCRIPT_EXCEL_URL || "";
+    try {
+      const res = await fetch(appsScriptUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+        mode: "no-cors",
+      });
+
+      if (res.status === 200 || res.type === "opaque") {
+        setStatus({ type: "success", message: "Your message has been sent successfully!" });
+        setFormData({ name: "", email: "", contact: "", subject: "", message: "" });
+      } else {
+        setStatus({ type: "error", message: "There was an error sending your message." });
+      }
+    } catch (err) {
+      setStatus({ type: "error", message: "Network error. Please try again later." });
+    }
+
+    // Hide banner automatically after 5 seconds
+    setTimeout(() => setStatus(null), 5000);
   };
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setFormData({
       ...formData,
@@ -32,9 +53,7 @@ const Contact = () => {
         {/* Header */}
         <div className="bg-white rounded-xl shadow-sm p-8 mb-8 text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
-          <p className="text-xl text-gray-500">
-            Get in touch with our aquascaping experts
-          </p>
+          <p className="text-xl text-gray-500">Get in touch with our aquascaping experts</p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -158,13 +177,24 @@ const Contact = () => {
                 Send us a Message
               </h2>
 
+              {/* Status Banner */}
+              {status && (
+                <div
+                  className={`mb-6 p-4 rounded-lg text-sm font-medium ${
+                    status.type === "success"
+                      ? "bg-green-100 text-green-800 border border-green-300"
+                      : "bg-red-100 text-red-800 border border-red-300"
+                  }`}
+                >
+                  {status.message}
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Full Name + Email */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                       Full Name *
                     </label>
                     <input
@@ -180,10 +210,7 @@ const Contact = () => {
                   </div>
 
                   <div>
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                       Email Address *
                     </label>
                     <input
@@ -199,11 +226,9 @@ const Contact = () => {
                   </div>
                 </div>
 
+                {/* Subject */}
                 <div>
-                  <label
-                    htmlFor="subject"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
+                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
                     Subject *
                   </label>
                   <select
@@ -218,18 +243,14 @@ const Contact = () => {
                     <option value="product-info">Product Information</option>
                     <option value="technical-support">Technical Support</option>
                     <option value="dealer-inquiry">Dealer Inquiry</option>
-                    <option value="consultation">
-                      Aquascaping Consultation
-                    </option>
+                    <option value="consultation">Aquascaping Consultation</option>
                     <option value="other">Other</option>
                   </select>
                 </div>
 
+                {/* Message */}
                 <div>
-                  <label
-                    htmlFor="message"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
                     Message *
                   </label>
                   <textarea
@@ -244,6 +265,7 @@ const Contact = () => {
                   ></textarea>
                 </div>
 
+                {/* Submit Button */}
                 <button
                   type="submit"
                   className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg font-semibold transition-colors flex items-center justify-center group"

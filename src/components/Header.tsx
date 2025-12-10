@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, Search, ShoppingCart } from "lucide-react";
@@ -9,8 +10,8 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMegaMenuVisible, setIsMegaMenuVisible] = useState(false);
   const [isCategoriesMenuVisible, setIsCategoriesMenuVisible] = useState(false);
-  const [hoverTimeout, setHoverTimeout] = useState<number | null>(null);
-  const [categoriesTimeout, setCategoriesTimeout] = useState<number | null>(
+  const [hoverTimeout, setHoverTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const [categoriesTimeout, setCategoriesTimeout] = useState<ReturnType<typeof setTimeout> | null>(
     null
   );
 
@@ -94,7 +95,7 @@ const Header = () => {
               src="/images/logo.webp"
               alt="VH Global Logo"
               className="h-16 w-auto ml-1"
-              fetchPriority="high"
+              // fetchPriority="high"
             />
             <h5 className="text-gray-600 text-sm mt-1 tracking-wide">
               Growing Green, Connecting Worlds
@@ -140,13 +141,13 @@ const Header = () => {
 
           {/* Icons */}
           <div className="flex items-center space-x-4">
-            <Search className="w-5 h-5 text-gray-500 hover:text-emerald-700 cursor-pointer transition-colors" />
+            {/* <Search className="w-5 h-5 text-gray-500 hover:text-emerald-700 cursor-pointer transition-colors" />
             <div className="relative">
               <ShoppingCart className="w-5 h-5 text-gray-500 hover:text-emerald-700 cursor-pointer transition-colors" />
               <span className="absolute -top-2 -right-2 bg-emerald-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 0
               </span>
-            </div>
+            </div> */}
 
             {/* Mobile Menu Button */}
             <button

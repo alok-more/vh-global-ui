@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Filter, Grid, List, Search, Package } from "lucide-react";
 import {
   useMainCategories,
@@ -10,6 +10,7 @@ import ProductModal from "../components/ProductModal";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
 import { ProductResponse } from "../types/api";
+import { useSearchParams } from "react-router-dom";
 
 const Products = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -21,6 +22,28 @@ const Products = () => {
     useState<ProductResponse | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 6;
+
+  const [searchParams] = useSearchParams();
+
+  // Sync with query params
+  useEffect(() => {
+    const main = searchParams.get("main");
+    const sub = searchParams.get("sub");
+
+    if (main) {
+      setSelectedMainCategory(main);
+    } else {
+      setSelectedMainCategory("all");
+    }
+
+    if (sub) {
+      setSelectedSubCategory(sub);
+    } else {
+      setSelectedSubCategory("all");
+    }
+
+    setCurrentPage(0);
+  }, [searchParams]);
 
   // API Queries
   const {
@@ -39,22 +62,18 @@ const Products = () => {
     error: productsError,
     refetch: refetchProducts,
   } = useProducts({
-    page: currentPage,
-    pageSize,
+    page: 0,
+    pageSize: 10000,
     sortBy: "name",
     sortDi: "asc",
   });
-  console.log(mainCategoriesData);
-  console.log(subCategoriesData);
-  console.log(productsData);
 
-  // Filter products based on selected categories and search
+  // Filter products
   const filteredProducts = useMemo(() => {
     if (!productsData?.data?.content) return [];
 
     let filtered = productsData.data.content;
 
-    // Filter by main category
     if (selectedMainCategory !== "all") {
       filtered = filtered.filter(
         (product) =>
@@ -63,7 +82,6 @@ const Products = () => {
       );
     }
 
-    // Filter by sub category
     if (selectedSubCategory !== "all") {
       filtered = filtered.filter(
         (product) =>
@@ -72,7 +90,6 @@ const Products = () => {
       );
     }
 
-    // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(
         (product) =>
@@ -86,7 +103,11 @@ const Products = () => {
     return filtered;
   }, [productsData, selectedMainCategory, selectedSubCategory, searchTerm]);
 
-  // Get filtered sub categories based on selected main category
+  const paginatedProducts = useMemo(() => {
+    const start = currentPage * pageSize;
+    return filteredProducts.slice(start, start + pageSize);
+  }, [filteredProducts, currentPage, pageSize]);
+
   const filteredSubCategories = useMemo(() => {
     if (!subCategoriesData?.data?.content) return [];
 
@@ -100,17 +121,6 @@ const Products = () => {
         selectedMainCategory
     );
   }, [subCategoriesData, selectedMainCategory]);
-
-  const handleMainCategoryChange = (categoryId: string) => {
-    setSelectedMainCategory(categoryId);
-    setSelectedSubCategory("all");
-    setCurrentPage(0);
-  };
-
-  const handleSubCategoryChange = (subCategoryId: string) => {
-    setSelectedSubCategory(subCategoryId);
-    setCurrentPage(0);
-  };
 
   if (mainCategoriesLoading || productsLoading) {
     return (
@@ -153,7 +163,10 @@ const Products = () => {
               type="text"
               placeholder="Search products..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(0);
+              }}
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
             />
           </div>
@@ -175,7 +188,7 @@ const Products = () => {
                 </h4>
                 <div className="space-y-2">
                   <button
-                    onClick={() => handleMainCategoryChange("all")}
+                    onClick={() => setSelectedMainCategory("all")}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                       selectedMainCategory === "all"
                         ? "bg-emerald-100 text-emerald-700 font-medium"
@@ -188,7 +201,7 @@ const Products = () => {
                     <button
                       key={category.productMainCategoryId}
                       onClick={() =>
-                        handleMainCategoryChange(category.productMainCategoryId)
+                        setSelectedMainCategory(category.productMainCategoryId)
                       }
                       className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                         selectedMainCategory === category.productMainCategoryId
@@ -210,7 +223,7 @@ const Products = () => {
                   </h4>
                   <div className="space-y-2">
                     <button
-                      onClick={() => handleSubCategoryChange("all")}
+                      onClick={() => setSelectedSubCategory("all")}
                       className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                         selectedSubCategory === "all"
                           ? "bg-cyan-100 text-cyan-700 font-medium"
@@ -223,7 +236,7 @@ const Products = () => {
                       <button
                         key={subCategory.productSubCategoryId}
                         onClick={() =>
-                          handleSubCategoryChange(
+                          setSelectedSubCategory(
                             subCategory.productSubCategoryId
                           )
                         }
@@ -276,7 +289,7 @@ const Products = () => {
             </div>
 
             {/* Products Grid/List */}
-            {filteredProducts.length === 0 ? (
+            {paginatedProducts.length === 0 ? (
               <div className="bg-white rounded-xl shadow-sm p-12 text-center">
                 <div className="text-gray-400 mb-4">
                   <Package className="w-16 h-16 mx-auto" />
@@ -297,7 +310,7 @@ const Products = () => {
                       : "grid-cols-1"
                   }`}
                 >
-                  {filteredProducts.map((product) => (
+                  {paginatedProducts.map((product) => (
                     <ProductCard
                       key={product.productId}
                       product={product}
@@ -306,7 +319,7 @@ const Products = () => {
                     />
                   ))}
                 </div>
-                {/* Pagination Controls */}
+                {/* Pagination */}
                 <div className="flex justify-center items-center mt-8 space-x-4">
                   <button
                     className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 disabled:opacity-50"
@@ -319,15 +332,13 @@ const Products = () => {
                   </button>
                   <span className="text-gray-500">
                     Page {currentPage + 1} of{" "}
-                    {productsData?.data?.totalPages || 1}
+                    {Math.ceil(filteredProducts.length / pageSize)}
                   </span>
                   <button
                     className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 disabled:opacity-50"
                     onClick={() => setCurrentPage((prev) => prev + 1)}
                     disabled={
-                      productsData?.data?.totalPages
-                        ? currentPage + 1 >= productsData.data.totalPages
-                        : true
+                      (currentPage + 1) * pageSize >= filteredProducts.length
                     }
                   >
                     Next
