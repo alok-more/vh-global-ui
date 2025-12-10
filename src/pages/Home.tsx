@@ -52,9 +52,9 @@ const Home = () => {
                 Explore Products
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <button className="border-2 border-white hover:bg-white hover:text-emerald-800 px-8 py-4 rounded-lg font-semibold transition-all duration-300">
+              {/* <button className="border-2 border-white hover:bg-white hover:text-emerald-800 px-8 py-4 rounded-lg font-semibold transition-all duration-300">
                 Watch Tutorial
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -77,20 +77,20 @@ const Home = () => {
               {
                 icon: <Leaf className="w-8 h-8 text-emerald-600" />,
                 bg: "bg-emerald-100",
-                title: "Premium Plants",
-                desc: "Carefully cultivated aquarium plants with guaranteed quality and vitality for stunning underwater gardens.",
+                title: "Professional & Trustworthy",
+                desc: "VHN Global is a trusted nursery brand delivering premium plants across India and worldwide. From ornamental and indoor plants to farming and landscape solutions, we provide sustainable greenery for every need. Growing nature, growing connections.",
               },
               {
                 icon: <Droplets className="w-8 h-8 text-cyan-600" />,
                 bg: "bg-cyan-100",
-                title: "Complete Systems",
-                desc: "Professional CO2 systems, filtration, and water treatment solutions for optimal aquarium conditions.",
+                title: "Customer-Friendly & Warm",
+                desc: "At VHN Global, we make it easy to bring nature into your home, farm, or workspace. Our wide range of nursery and farming plants are grown with care and delivered with quality. Together, let’s create a greener tomorrow.",
               },
               {
                 icon: <Zap className="w-8 h-8 text-yellow-600" />,
                 bg: "bg-yellow-100",
-                title: "Innovation",
-                desc: "Cutting-edge technology and research-backed solutions for the modern aquascaping enthusiast.",
+                title: "Export-Focused & Modern",
+                desc: "VHN Global specializes in exporting high-quality nursery and farming plants, connecting India’s green treasures with the world. With a commitment to freshness, sustainability, and trust, we’re here to grow with you.",
               },
             ].map((feature, idx) => (
               <div
@@ -126,10 +126,10 @@ const Home = () => {
 
           {mainCategoriesData?.data ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {mainCategoriesData.data.slice(0, 6).map((category, index) => (
+              {mainCategoriesData.data.slice(0, 6).map((category) => (
                 <Link
+                  to={`/products?main=${category.productMainCategoryId}`} 
                   key={category.productMainCategoryId}
-                  to={`/products?category=${category.productMainCategoryId}`}
                   className="group cursor-pointer"
                 >
                   <div className="relative overflow-hidden mx-auto rounded-xl mb-4">
@@ -263,7 +263,7 @@ const Home = () => {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-16 bg-emerald-800 pb-32 -mb-[50px] relative z-0">
+      {/* <section className="py-16 bg-emerald-800 pb-32 -mb-[50px] relative z-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Stay Updated</h2>
           <p className="text-emerald-100 mb-8 max-w-2xl mx-auto">
@@ -282,7 +282,7 @@ const Home = () => {
             </button>
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };

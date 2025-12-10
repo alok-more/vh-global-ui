@@ -55,7 +55,7 @@ const ProductMegaMenu: React.FC<ProductMegaMenuProps> = ({
                   >
                     {/* Main Category Card */}
                     <Link
-                      to={`/products?mainCategory=${category.productMainCategoryId}`}
+                      to={`/products?main=${category.productMainCategoryId}`} 
                       onClick={onClose}
                       className="block group"
                     >
@@ -83,7 +83,7 @@ const ProductMegaMenu: React.FC<ProductMegaMenuProps> = ({
                         .map((subCategory) => (
                           <Link
                             key={subCategory.productSubCategoryId}
-                            to={`/products?subCategory=${subCategory.productSubCategoryId}`}
+                            to={`/products?main=${category.productMainCategoryId}&sub=${subCategory.productSubCategoryId}`}
                             onClick={onClose}
                             className="block text-sm text-gray-500 hover:text-emerald-600 transition-colors py-1"
                           >

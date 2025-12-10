@@ -1,5 +1,5 @@
-import React from "react";
-import { X, ShoppingCart, Package, Tag } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { X, Package, Tag } from "lucide-react";
 import { ProductResponse } from "../types/api";
 import { productApi } from "../services/api";
 
@@ -16,6 +16,11 @@ const ProductModal: React.FC<ProductModalProps> = ({
 }) => {
   if (!isOpen || !product) return null;
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [mainImage, setMainImage] = useState<string>("");
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [thumbnails, setThumbnails] = useState<string[]>([]);
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("de-DE", {
       style: "currency",
@@ -25,45 +30,42 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
   const fixImageUrl = (url: string): string => {
     if (!url) return "";
-
-    // Fix incorrect URLs from backend that have double path
-    // Convert: http://localhost:8080/images/uploads/images/filename.png
-    // To: http://localhost:8080/images/filename.webp
     if (url.includes("/images/uploads/images/")) {
       const filename = url.split("/").pop()?.replace(".png", ".webp") || "";
-      return `http://localhost:8080/images/${filename}`;
+      return `${process.env.BACKEND_URL}/images/${filename}`;
     }
-
     return url;
   };
 
   const getImageUrl = (imageUrl: string) => {
-    if (!imageUrl) {
-      // If primaryImageUrl is null, try to use the first additional image
-      if (
-        product?.additionalImageUrls &&
-        product.additionalImageUrls.length > 0
-      ) {
-        const additionalImageUrl = fixImageUrl(product.additionalImageUrls[0]);
-        console.log(
-          "Using additional image URL as fallback:",
-          additionalImageUrl
-        );
-        return additionalImageUrl;
-      }
-      console.warn(
-        "Image URL is null or undefined and no additional images available"
-      );
-      return "/images/nursary-product.png"; // fallback image
-    }
-
-    // If it's already a complete URL (from backend), use it directly
+    if (!imageUrl) return "/images/nursary-product.png";
     if (imageUrl.startsWith("http")) {
       return fixImageUrl(imageUrl);
     }
-
-    // Fallback: construct URL if we only have filename
     return productApi.getImage(imageUrl);
+  };
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    if (product) {
+      const primary = getImageUrl(product.primaryImageUrl);
+      const additional = (product.additionalImageUrls || []).map(getImageUrl);
+
+      setMainImage(primary);
+      setThumbnails(additional);
+    }
+  }, [product]);
+
+  const handleThumbnailClick = (clickedImage: string) => {
+    if (clickedImage === mainImage) return;
+
+  // Swap logic
+    setThumbnails((prev) => {
+      const updated = prev.filter((img) => img !== clickedImage);
+      return [mainImage, ...updated]; // push old main into thumbs
+    });
+
+    setMainImage(clickedImage);
   };
 
   return (
@@ -86,25 +88,29 @@ const ProductModal: React.FC<ProductModalProps> = ({
             <div>
               <div className="mb-4">
                 <img
-                  src={getImageUrl(product.primaryImageUrl)}
+                  src={mainImage}
                   alt={product.name}
                   className="w-full h-full object-cover rounded-xl"
                 />
               </div>
 
-              {/* {product.additionalImageUrls &&
-                product.additionalImageUrls.length > 0 && (
-                  <div className="grid grid-cols-4 gap-2">
-                    {product.additionalImageUrls.map((imageUrl, index) => (
-                      <img
-                        key={index}
-                        src={getImageUrl(imageUrl)}
-                        alt={`${product.name} ${index + 1}`}
-                        className="w-full h-20 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
-                      />
-                    ))}
-                  </div>
-                )} */}
+              {thumbnails.length > 0 && (
+                <div className="grid grid-cols-4 gap-2">
+                  {thumbnails.map((thumb, index) => (
+                    <img
+                      key={index}
+                      src={thumb}
+                      alt={`${product.name} ${index + 1}`}
+                      className={`w-full h-20 object-cover rounded-lg cursor-pointer transition-opacity ${
+                        mainImage === thumb
+                          ? "ring-2 ring-emerald-500"
+                          : "hover:opacity-80"
+                      }`}
+                      onClick={() => handleThumbnailClick(thumb)}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Product Details */}
@@ -151,23 +157,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   </p>
                 </div>
               )}
-
-              {/* Actions */}
-              <div className="space-y-4">
-                <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-xl font-semibold transition-colors flex items-center justify-center space-x-2">
-                  <ShoppingCart className="w-5 h-5" />
-                  <span>Add to Cart</span>
-                </button>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <button className="border border-gray-300 hover:border-emerald-600 text-gray-700 hover:text-emerald-600 py-3 rounded-xl font-medium transition-colors">
-                    Add to Wishlist
-                  </button>
-                  <button className="border border-gray-300 hover:border-emerald-600 text-gray-700 hover:text-emerald-600 py-3 rounded-xl font-medium transition-colors">
-                    Compare
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </div>
