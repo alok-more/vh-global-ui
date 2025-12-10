@@ -1,99 +1,133 @@
-import React, { useState, useMemo } from 'react';
-import { Filter, Grid, List, Search } from 'lucide-react';
-import { useMainCategories, useSubCategories, useProducts } from '../hooks/useProducts';
-import ProductCard from '../components/ProductCard';
-import ProductModal from '../components/ProductModal';
-import LoadingSpinner from '../components/LoadingSpinner';
-import ErrorMessage from '../components/ErrorMessage';
-import { ProductResponse } from '../types/api';
+import React, { useState, useMemo, useEffect } from "react";
+import { Filter, Grid, List, Search, Package } from "lucide-react";
+import {
+  useMainCategories,
+  useSubCategories,
+  useProducts,
+} from "../hooks/useProducts";
+import ProductCard from "../components/ProductCard";
+import ProductModal from "../components/ProductModal";
+import LoadingSpinner from "../components/LoadingSpinner";
+import ErrorMessage from "../components/ErrorMessage";
+import { ProductResponse } from "../types/api";
+import { useSearchParams } from "react-router-dom";
 
 const Products = () => {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [selectedMainCategory, setSelectedMainCategory] = useState<string>('all');
-  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedProduct, setSelectedProduct] = useState<ProductResponse | null>(null);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [selectedMainCategory, setSelectedMainCategory] =
+    useState<string>("all");
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedProduct, setSelectedProduct] =
+    useState<ProductResponse | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const pageSize = 30;
+  const pageSize = 6;
+
+  const [searchParams] = useSearchParams();
+
+  // Sync with query params
+  useEffect(() => {
+    const main = searchParams.get("main");
+    const sub = searchParams.get("sub");
+
+    if (main) {
+      setSelectedMainCategory(main);
+    } else {
+      setSelectedMainCategory("all");
+    }
+
+    if (sub) {
+      setSelectedSubCategory(sub);
+    } else {
+      setSelectedSubCategory("all");
+    }
+
+    setCurrentPage(0);
+  }, [searchParams]);
 
   // API Queries
-  const { data: mainCategoriesData, isLoading: mainCategoriesLoading, error: mainCategoriesError } = useMainCategories();
+  const {
+    data: mainCategoriesData,
+    isLoading: mainCategoriesLoading,
+    error: mainCategoriesError,
+  } = useMainCategories();
   const { data: subCategoriesData } = useSubCategories({
     page: 0,
     pageSize: 100,
-    hydrateMainCategory: true
+    hydrateMainCategory: true,
   });
-  const { data: productsData, isLoading: productsLoading, error: productsError, refetch: refetchProducts } = useProducts({
-    page: currentPage,
-    pageSize,
-    sortBy: 'name',
-    sortDi: 'asc'
+  const {
+    data: productsData,
+    isLoading: productsLoading,
+    error: productsError,
+    refetch: refetchProducts,
+  } = useProducts({
+    page: 0,
+    pageSize: 10000,
+    sortBy: "name",
+    sortDi: "asc",
   });
-  console.log(mainCategoriesData)
-  console.log(subCategoriesData)
-  console.log(productsData)
 
-  // Filter products based on selected categories and search
+  // Filter products
   const filteredProducts = useMemo(() => {
     if (!productsData?.data?.content) return [];
-    
+
     let filtered = productsData.data.content;
 
-    // Filter by main category
-    if (selectedMainCategory !== 'all') {
-      filtered = filtered.filter(product => 
-        product.productSubCategory.productMainCategory.productMainCategoryId === selectedMainCategory
+    if (selectedMainCategory !== "all") {
+      filtered = filtered.filter(
+        (product) =>
+          product.productSubCategory.productMainCategory
+            .productMainCategoryId === selectedMainCategory
       );
     }
 
-    // Filter by sub category
-    if (selectedSubCategory !== 'all') {
-      filtered = filtered.filter(product => 
-        product.productSubCategory.productSubCategoryId === selectedSubCategory
+    if (selectedSubCategory !== "all") {
+      filtered = filtered.filter(
+        (product) =>
+          product.productSubCategory.productSubCategoryId ===
+          selectedSubCategory
       );
     }
 
-    // Filter by search term
     if (searchTerm) {
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.shortDescription?.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (product) =>
+          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product.shortDescription
+            ?.toLowerCase()
+            .includes(searchTerm.toLowerCase())
       );
     }
 
     return filtered;
   }, [productsData, selectedMainCategory, selectedSubCategory, searchTerm]);
 
-  // Get filtered sub categories based on selected main category
+  const paginatedProducts = useMemo(() => {
+    const start = currentPage * pageSize;
+    return filteredProducts.slice(start, start + pageSize);
+  }, [filteredProducts, currentPage, pageSize]);
+
   const filteredSubCategories = useMemo(() => {
     if (!subCategoriesData?.data?.content) return [];
-    
-    if (selectedMainCategory === 'all') {
+
+    if (selectedMainCategory === "all") {
       return subCategoriesData.data.content;
     }
-    
-    return subCategoriesData.data.content.filter(subCat =>
-      subCat.productMainCategory.productMainCategoryId === selectedMainCategory
+
+    return subCategoriesData.data.content.filter(
+      (subCat) =>
+        subCat.productMainCategory.productMainCategoryId ===
+        selectedMainCategory
     );
   }, [subCategoriesData, selectedMainCategory]);
-
-  const handleMainCategoryChange = (categoryId: string) => {
-    setSelectedMainCategory(categoryId);
-    setSelectedSubCategory('all');
-    setCurrentPage(0);
-  };
-
-  const handleSubCategoryChange = (subCategoryId: string) => {
-    setSelectedSubCategory(subCategoryId);
-    setCurrentPage(0);
-  };
 
   if (mainCategoriesLoading || productsLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <LoadingSpinner size="lg" />
-          <p className="mt-4 text-gray-600">Loading products...</p>
+          <p className="mt-4 text-gray-500">Loading products...</p>
         </div>
       </div>
     );
@@ -102,7 +136,7 @@ const Products = () => {
   if (mainCategoriesError || productsError) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <ErrorMessage 
+        <ErrorMessage
           message="Failed to load products. Please check if the API server is running."
           onRetry={refetchProducts}
         />
@@ -115,11 +149,13 @@ const Products = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="bg-white rounded-xl shadow-sm p-8 mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Our Products</h1>
-          <p className="text-xl text-gray-600">
+          <h1 className="text-4xl font-heading font-extrabold text-gray-900 mb-3">
+            Our Products
+          </h1>
+          <p className="text-xl text-gray-500">
             Professional aquascaping solutions for every need
           </p>
-          
+
           {/* Search Bar */}
           <div className="mt-6 relative max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -127,7 +163,10 @@ const Products = () => {
               type="text"
               placeholder="Search products..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(0);
+              }}
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
             />
           </div>
@@ -138,32 +177,36 @@ const Products = () => {
           <div className="lg:w-64">
             <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
               <div className="flex items-center mb-4">
-                <Filter className="w-5 h-5 text-gray-600 mr-2" />
+                <Filter className="w-5 h-5 text-gray-500 mr-2" />
                 <h3 className="font-semibold text-gray-900">Categories</h3>
               </div>
-              
+
               {/* Main Categories */}
               <div className="mb-6">
-                <h4 className="text-sm font-medium text-gray-700 mb-3">Main Categories</h4>
+                <h4 className="text-sm font-medium text-gray-700 mb-3">
+                  Main Categories
+                </h4>
                 <div className="space-y-2">
                   <button
-                    onClick={() => handleMainCategoryChange('all')}
+                    onClick={() => setSelectedMainCategory("all")}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                      selectedMainCategory === 'all'
-                        ? 'bg-emerald-100 text-emerald-700 font-medium'
-                        : 'text-gray-700 hover:bg-gray-100'
+                      selectedMainCategory === "all"
+                        ? "bg-emerald-100 text-emerald-700 font-medium"
+                        : "text-gray-700 hover:bg-gray-100"
                     }`}
                   >
                     All Categories
                   </button>
-                  {mainCategoriesData?.data?.map(category => (
+                  {mainCategoriesData?.data?.map((category) => (
                     <button
                       key={category.productMainCategoryId}
-                      onClick={() => handleMainCategoryChange(category.productMainCategoryId)}
+                      onClick={() =>
+                        setSelectedMainCategory(category.productMainCategoryId)
+                      }
                       className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                         selectedMainCategory === category.productMainCategoryId
-                          ? 'bg-emerald-100 text-emerald-700 font-medium'
-                          : 'text-gray-700 hover:bg-gray-100'
+                          ? "bg-emerald-100 text-emerald-700 font-medium"
+                          : "text-gray-700 hover:bg-gray-100"
                       }`}
                     >
                       {category.name}
@@ -175,26 +218,33 @@ const Products = () => {
               {/* Sub Categories */}
               {filteredSubCategories.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-3">Sub Categories</h4>
+                  <h4 className="text-sm font-medium text-gray-700 mb-3">
+                    Sub Categories
+                  </h4>
                   <div className="space-y-2">
                     <button
-                      onClick={() => handleSubCategoryChange('all')}
+                      onClick={() => setSelectedSubCategory("all")}
                       className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                        selectedSubCategory === 'all'
-                          ? 'bg-cyan-100 text-cyan-700 font-medium'
-                          : 'text-gray-700 hover:bg-gray-100'
+                        selectedSubCategory === "all"
+                          ? "bg-cyan-100 text-cyan-700 font-medium"
+                          : "text-gray-700 hover:bg-gray-100"
                       }`}
                     >
                       All Sub Categories
                     </button>
-                    {filteredSubCategories.map(subCategory => (
+                    {filteredSubCategories.map((subCategory) => (
                       <button
                         key={subCategory.productSubCategoryId}
-                        onClick={() => handleSubCategoryChange(subCategory.productSubCategoryId)}
+                        onClick={() =>
+                          setSelectedSubCategory(
+                            subCategory.productSubCategoryId
+                          )
+                        }
                         className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                          selectedSubCategory === subCategory.productSubCategoryId
-                            ? 'bg-cyan-100 text-cyan-700 font-medium'
-                            : 'text-gray-700 hover:bg-gray-100'
+                          selectedSubCategory ===
+                          subCategory.productSubCategoryId
+                            ? "bg-cyan-100 text-cyan-700 font-medium"
+                            : "text-gray-700 hover:bg-gray-100"
                         }`}
                       >
                         {subCategory.name}
@@ -210,27 +260,27 @@ const Products = () => {
           <div className="flex-1">
             {/* View Controls */}
             <div className="bg-white rounded-xl shadow-sm p-4 mb-6 flex justify-between items-center">
-              <span className="text-gray-600">
+              <span className="text-gray-500">
                 Showing {filteredProducts.length} products
               </span>
-              
+
               <div className="flex items-center space-x-2">
                 <button
-                  onClick={() => setViewMode('grid')}
+                  onClick={() => setViewMode("grid")}
                   className={`p-2 rounded-lg transition-colors ${
-                    viewMode === 'grid' 
-                      ? 'bg-emerald-100 text-emerald-700' 
-                      : 'text-gray-600 hover:bg-gray-100'
+                    viewMode === "grid"
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "text-gray-500 hover:bg-gray-100"
                   }`}
                 >
                   <Grid className="w-5 h-5" />
                 </button>
                 <button
-                  onClick={() => setViewMode('list')}
+                  onClick={() => setViewMode("list")}
                   className={`p-2 rounded-lg transition-colors ${
-                    viewMode === 'list' 
-                      ? 'bg-emerald-100 text-emerald-700' 
-                      : 'text-gray-600 hover:bg-gray-100'
+                    viewMode === "list"
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "text-gray-500 hover:bg-gray-100"
                   }`}
                 >
                   <List className="w-5 h-5" />
@@ -239,29 +289,62 @@ const Products = () => {
             </div>
 
             {/* Products Grid/List */}
-            {filteredProducts.length === 0 ? (
+            {paginatedProducts.length === 0 ? (
               <div className="bg-white rounded-xl shadow-sm p-12 text-center">
                 <div className="text-gray-400 mb-4">
                   <Package className="w-16 h-16 mx-auto" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">No products found</h3>
-                <p className="text-gray-500">Try adjusting your filters or search terms.</p>
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                  No products found
+                </h3>
+                <p className="text-gray-500">
+                  Try adjusting your filters or search terms.
+                </p>
               </div>
             ) : (
-              <div className={`grid gap-6 ${
-                viewMode === 'grid' 
-                  ? 'md:grid-cols-2 xl:grid-cols-3' 
-                  : 'grid-cols-1'
-              }`}>
-                {filteredProducts.map(product => (
-                  <ProductCard
-                    key={product.productId}
-                    product={product}
-                    viewMode={viewMode}
-                    onViewDetails={setSelectedProduct}
-                  />
-                ))}
-              </div>
+              <>
+                <div
+                  className={`grid gap-6 ${
+                    viewMode === "grid"
+                      ? "md:grid-cols-2 xl:grid-cols-3"
+                      : "grid-cols-1"
+                  }`}
+                >
+                  {paginatedProducts.map((product) => (
+                    <ProductCard
+                      key={product.productId}
+                      product={product}
+                      viewMode={viewMode}
+                      onViewDetails={setSelectedProduct}
+                    />
+                  ))}
+                </div>
+                {/* Pagination */}
+                <div className="flex justify-center items-center mt-8 space-x-4">
+                  <button
+                    className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 disabled:opacity-50"
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 0))
+                    }
+                    disabled={currentPage === 0}
+                  >
+                    Previous
+                  </button>
+                  <span className="text-gray-500">
+                    Page {currentPage + 1} of{" "}
+                    {Math.ceil(filteredProducts.length / pageSize)}
+                  </span>
+                  <button
+                    className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 disabled:opacity-50"
+                    onClick={() => setCurrentPage((prev) => prev + 1)}
+                    disabled={
+                      (currentPage + 1) * pageSize >= filteredProducts.length
+                    }
+                  >
+                    Next
+                  </button>
+                </div>
+              </>
             )}
           </div>
         </div>

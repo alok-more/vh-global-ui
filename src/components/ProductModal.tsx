@@ -1,7 +1,7 @@
-import React from 'react';
-import { X, ShoppingCart, Package, Tag } from 'lucide-react';
-import { ProductResponse } from '../types/api';
-import { productApi } from '../services/api';
+import React, { useState, useEffect } from "react";
+import { X, Package, Tag } from "lucide-react";
+import { ProductResponse } from "../types/api";
+import { productApi } from "../services/api";
 
 interface ProductModalProps {
   product: ProductResponse | null;
@@ -9,34 +9,76 @@ interface ProductModalProps {
   onClose: () => void;
 }
 
-const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose }) => {
+const ProductModal: React.FC<ProductModalProps> = ({
+  product,
+  isOpen,
+  onClose,
+}) => {
   if (!isOpen || !product) return null;
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [mainImage, setMainImage] = useState<string>("");
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [thumbnails, setThumbnails] = useState<string[]>([]);
+
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR'
+    return new Intl.NumberFormat("de-DE", {
+      style: "currency",
+      currency: "EUR",
     }).format(price);
   };
 
-  const getImageUrl = (imageUrl: string) => {
-    if (imageUrl?.startsWith('http')) {
-      return imageUrl;
+  const fixImageUrl = (url: string): string => {
+    if (!url) return "";
+    if (url.includes("/images/uploads/images/")) {
+      const filename = url.split("/").pop()?.replace(".png", ".webp") || "";
+      return `${process.env.BACKEND_URL}/images/${filename}`;
     }
-    return imageUrl ? productApi.getImage(imageUrl) : 'https://images.pexels.com/photos/1078736/pexels-photo-1078736.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop';
+    return url;
+  };
+
+  const getImageUrl = (imageUrl: string) => {
+    if (!imageUrl) return "/images/nursary-product.png";
+    if (imageUrl.startsWith("http")) {
+      return fixImageUrl(imageUrl);
+    }
+    return productApi.getImage(imageUrl);
+  };
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    if (product) {
+      const primary = getImageUrl(product.primaryImageUrl);
+      const additional = (product.additionalImageUrls || []).map(getImageUrl);
+
+      setMainImage(primary);
+      setThumbnails(additional);
+    }
+  }, [product]);
+
+  const handleThumbnailClick = (clickedImage: string) => {
+    if (clickedImage === mainImage) return;
+
+  // Swap logic
+    setThumbnails((prev) => {
+      const updated = prev.filter((img) => img !== clickedImage);
+      return [mainImage, ...updated]; // push old main into thumbs
+    });
+
+    setMainImage(clickedImage);
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-40">
       <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-gray-200">
           <h2 className="text-2xl font-bold text-gray-900">{product.name}</h2>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <X className="w-6 h-6 text-gray-600" />
+            <X className="w-6 h-6 text-gray-500" />
           </button>
         </div>
 
@@ -45,21 +87,26 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
             {/* Images */}
             <div>
               <div className="mb-4">
-                <img 
-                  src={getImageUrl(product.primaryImageUrl)}
+                <img
+                  src={mainImage}
                   alt={product.name}
-                  className="w-full h-80 object-cover rounded-xl"
+                  className="w-full h-full object-cover rounded-xl"
                 />
               </div>
-              
-              {product.additionalImageUrls && product.additionalImageUrls.length > 0 && (
+
+              {thumbnails.length > 0 && (
                 <div className="grid grid-cols-4 gap-2">
-                  {product.additionalImageUrls.map((imageUrl, index) => (
-                    <img 
+                  {thumbnails.map((thumb, index) => (
+                    <img
                       key={index}
-                      src={getImageUrl(imageUrl)}
+                      src={thumb}
                       alt={`${product.name} ${index + 1}`}
-                      className="w-full h-20 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                      className={`w-full h-20 object-cover rounded-lg cursor-pointer transition-opacity ${
+                        mainImage === thumb
+                          ? "ring-2 ring-emerald-500"
+                          : "hover:opacity-80"
+                      }`}
+                      onClick={() => handleThumbnailClick(thumb)}
                     />
                   ))}
                 </div>
@@ -71,8 +118,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
               <div className="mb-6">
                 <div className="flex items-center space-x-2 mb-4">
                   <Tag className="w-5 h-5 text-emerald-600" />
-                  <span className="text-sm text-gray-600">
-                    {product.productSubCategory.productMainCategory.name} → {product.productSubCategory.name}
+                  <span className="text-sm text-gray-500">
+                    {product.productSubCategory.productMainCategory.name} →{" "}
+                    {product.productSubCategory.name}
                   </span>
                 </div>
 
@@ -81,8 +129,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
                 </div>
 
                 <div className="flex items-center space-x-2 mb-6">
-                  <Package className="w-5 h-5 text-gray-600" />
-                  <span className="text-sm text-gray-600">
+                  <Package className="w-5 h-5 text-gray-500" />
+                  <span className="text-sm text-gray-500">
                     Minimum quantity: {product.minimumQuantity}
                   </span>
                 </div>
@@ -90,34 +138,25 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
 
               {product.shortDescription && (
                 <div className="mb-6">
-                  <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
-                  <p className="text-gray-600 leading-relaxed">{product.shortDescription}</p>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    Description
+                  </h3>
+                  <p className="text-gray-500 leading-relaxed">
+                    {product.shortDescription}
+                  </p>
                 </div>
               )}
 
               {product.longDescription && (
                 <div className="mb-8">
-                  <h3 className="font-semibold text-gray-900 mb-2">Detailed Information</h3>
-                  <p className="text-gray-600 leading-relaxed">{product.longDescription}</p>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    Detailed Information
+                  </h3>
+                  <p className="text-gray-500 leading-relaxed">
+                    {product.longDescription}
+                  </p>
                 </div>
               )}
-
-              {/* Actions */}
-              <div className="space-y-4">
-                <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-xl font-semibold transition-colors flex items-center justify-center space-x-2">
-                  <ShoppingCart className="w-5 h-5" />
-                  <span>Add to Cart</span>
-                </button>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <button className="border border-gray-300 hover:border-emerald-600 text-gray-700 hover:text-emerald-600 py-3 rounded-xl font-medium transition-colors">
-                    Add to Wishlist
-                  </button>
-                  <button className="border border-gray-300 hover:border-emerald-600 text-gray-700 hover:text-emerald-600 py-3 rounded-xl font-medium transition-colors">
-                    Compare
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </div>

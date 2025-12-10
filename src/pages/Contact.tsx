@@ -1,24 +1,49 @@
-import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
+import React, { useState } from "react";
+import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
+    name: "",
+    email: "",
+    contact: "",
+    subject: "",
+    message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
+
+    const appsScriptUrl = import.meta.env.VITE_APP_SCRIPT_EXCEL_URL || "";
+    try {
+      const res = await fetch(appsScriptUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+        mode: "no-cors",
+      });
+
+      if (res.status === 200 || res.type === "opaque") {
+        setStatus({ type: "success", message: "Your message has been sent successfully!" });
+        setFormData({ name: "", email: "", contact: "", subject: "", message: "" });
+      } else {
+        setStatus({ type: "error", message: "There was an error sending your message." });
+      }
+    } catch (err) {
+      setStatus({ type: "error", message: "Network error. Please try again later." });
+    }
+
+    // Hide banner automatically after 5 seconds
+    setTimeout(() => setStatus(null), 5000);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -28,27 +53,31 @@ const Contact = () => {
         {/* Header */}
         <div className="bg-white rounded-xl shadow-sm p-8 mb-8 text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
-          <p className="text-xl text-gray-600">
-            Get in touch with our aquascaping experts
-          </p>
+          <p className="text-xl text-gray-500">Get in touch with our aquascaping experts</p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Contact Information */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h2>
-              
+              <h2 className="text-2xl font-extrabold font-heading text-gray-900 mb-6">
+                Get in Touch
+              </h2>
+
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <MapPin className="w-6 h-6 text-emerald-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Address</h3>
-                    <p className="text-gray-600">
-                      Dennerle GmbH<br />
-                      Krötenbrunnenstraße 30<br />
+                    <h3 className="font-semibold text-gray-900 mb-1">
+                      Address
+                    </h3>
+                    <p className="text-gray-500">
+                      Dennerle GmbH
+                      <br />
+                      Krötenbrunnenstraße 30
+                      <br />
                       76889 Vinningen, Germany
                     </p>
                   </div>
@@ -60,8 +89,9 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
-                    <p className="text-gray-600">
-                      +91-727600399<br />
+                    <p className="text-gray-500">
+                      +91-727600399
+                      <br />
                     </p>
                   </div>
                 </div>
@@ -72,8 +102,9 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-                    <p className="text-gray-600">
-                      vhglovbaltrader@gmail.com<br />
+                    <p className="text-gray-500">
+                      vhglovbaltrader@gmail.com
+                      <br />
                       support@dennerle.com
                     </p>
                   </div>
@@ -84,10 +115,14 @@ const Contact = () => {
                     <Clock className="w-6 h-6 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Business Hours</h3>
-                    <p className="text-gray-600">
-                      Monday - Friday: 8:00 - 17:00<br />
-                      Saturday: 9:00 - 15:00<br />
+                    <h3 className="font-semibold text-gray-900 mb-1">
+                      Business Hours
+                    </h3>
+                    <p className="text-gray-500">
+                      Monday - Friday: 8:00 - 17:00
+                      <br />
+                      Saturday: 9:00 - 15:00
+                      <br />
                       Sunday: Closed
                     </p>
                   </div>
@@ -97,21 +132,38 @@ const Contact = () => {
 
             {/* Support Topics */}
             <div className="bg-emerald-50 rounded-xl p-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Need Help?</h3>
+              <h3 className="text-xl font-extrabold font-heading text-gray-900 mb-4">
+                Need Help?
+              </h3>
               <div className="space-y-3">
-                <a href="#" className="block text-emerald-700 hover:text-emerald-800 font-medium transition-colors">
+                <a
+                  href="#"
+                  className="block text-emerald-700 hover:text-emerald-800 font-medium transition-colors"
+                >
                   Product Information
                 </a>
-                <a href="#" className="block text-emerald-700 hover:text-emerald-800 font-medium transition-colors">
+                <a
+                  href="#"
+                  className="block text-emerald-700 hover:text-emerald-800 font-medium transition-colors"
+                >
                   Technical Support
                 </a>
-                <a href="#" className="block text-emerald-700 hover:text-emerald-800 font-medium transition-colors">
+                <a
+                  href="#"
+                  className="block text-emerald-700 hover:text-emerald-800 font-medium transition-colors"
+                >
                   Aquascaping Consultation
                 </a>
-                <a href="#" className="block text-emerald-700 hover:text-emerald-800 font-medium transition-colors">
+                <a
+                  href="#"
+                  className="block text-emerald-700 hover:text-emerald-800 font-medium transition-colors"
+                >
                   Dealer Information
                 </a>
-                <a href="#" className="block text-emerald-700 hover:text-emerald-800 font-medium transition-colors">
+                <a
+                  href="#"
+                  className="block text-emerald-700 hover:text-emerald-800 font-medium transition-colors"
+                >
                   Warranty & Returns
                 </a>
               </div>
@@ -121,9 +173,25 @@ const Contact = () => {
           {/* Contact Form */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
-              
+              <h2 className="text-2xl font-extrabold text-gray-900 mb-6 font-heading">
+                Send us a Message
+              </h2>
+
+              {/* Status Banner */}
+              {status && (
+                <div
+                  className={`mb-6 p-4 rounded-lg text-sm font-medium ${
+                    status.type === "success"
+                      ? "bg-green-100 text-green-800 border border-green-300"
+                      : "bg-red-100 text-red-800 border border-red-300"
+                  }`}
+                >
+                  {status.message}
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Full Name + Email */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
@@ -158,6 +226,7 @@ const Contact = () => {
                   </div>
                 </div>
 
+                {/* Subject */}
                 <div>
                   <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
                     Subject *
@@ -179,6 +248,7 @@ const Contact = () => {
                   </select>
                 </div>
 
+                {/* Message */}
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
                     Message *
@@ -195,6 +265,7 @@ const Contact = () => {
                   ></textarea>
                 </div>
 
+                {/* Submit Button */}
                 <button
                   type="submit"
                   className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg font-semibold transition-colors flex items-center justify-center group"

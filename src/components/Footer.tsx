@@ -1,57 +1,55 @@
-import React from 'react';
-import { Mail, Phone, MapPin, Facebook, Instagram, Youtube, Send } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import {
+  Mail,
+  Phone,
+  MapPin,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import { useMainCategories } from "../hooks/useProducts";
+
 
 const Footer = () => {
+  const { data: mainCategoriesData } = useMainCategories();
+
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-gray-900 text-white rounded-t-[50px] pt-6 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="lg:col-span-1">
-            <div className="flex items-center space-x-2 mb-6">
-              <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">VH</span>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold">VH Global Trader</h3>
-                <p className="text-xs text-gray-400 uppercase tracking-wide">Aquascaping Excellence</p>
-              </div>
-            </div>
+            {/* <div className="bg-white text-center flex items-center justify-center mb-2 py-2 rounded-[50px]"> */}
+            <Link to="/" className="flex items-center space-x-2">
+              <img
+                src="/images/logo-light.png"
+                alt="VH Global Logo"
+                className="h-16 w-auto"
+                // fetchpriority="high"
+              />
+            </Link>
+            {/* </div> */}
             <p className="text-gray-300 mb-6 leading-relaxed">
-              Your trusted partner for premium aquascaping solutions since 1966. 
-              Creating underwater masterpieces with German engineering excellence.
+              VHN Global delivers premium nursery and farming plants across India and international markets. With a focus on quality, sustainability, and trust, we make greenery accessible for homes, farms, and landscapes worldwide. 
             </p>
             <div className="flex space-x-4">
-              <Facebook className="w-5 h-5 text-gray-400 hover:text-emerald-400 cursor-pointer transition-colors" />
-              <Instagram className="w-5 h-5 text-gray-400 hover:text-emerald-400 cursor-pointer transition-colors" />
-              <Youtube className="w-5 h-5 text-gray-400 hover:text-emerald-400 cursor-pointer transition-colors" />
+              {/* <Facebook className="w-5 h-5 text-gray-400 hover:text-emerald-400 cursor-pointer transition-colors" /> */}
+              {/* <Instagram className="w-5 h-5 text-gray-400 hover:text-emerald-400 cursor-pointer transition-colors" /> */}
+              {/* <Youtube className="w-5 h-5 text-gray-400 hover:text-emerald-400 cursor-pointer transition-colors" /> */}
             </div>
           </div>
 
           {/* Products */}
-          <div>
+           <div>
             <h4 className="text-lg font-semibold mb-6">Products</h4>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-300 hover:text-emerald-400 transition-colors">Aquarium Plants</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-emerald-400 transition-colors">CO2 Systems</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-emerald-400 transition-colors">Fertilizers</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-emerald-400 transition-colors">Substrates</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-emerald-400 transition-colors">Equipment</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-emerald-400 transition-colors">Water Care</a></li>
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h4 className="text-lg font-semibold mb-6">Support</h4>
-            <ul className="space-y-3">
-              <li><a href="#" className="text-gray-300 hover:text-emerald-400 transition-colors">Help Center</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-emerald-400 transition-colors">Plant Care Guide</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-emerald-400 transition-colors">Installation Videos</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-emerald-400 transition-colors">Technical Support</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-emerald-400 transition-colors">Warranty</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-emerald-400 transition-colors">Returns</a></li>
+              {mainCategoriesData?.data?.map((category) => (
+                <li key={category.productMainCategoryId}>
+                  <Link
+                    to={`/products?main=${category.productMainCategoryId}`}
+                    className="text-gray-300 hover:text-emerald-400 transition-colors"
+                  >
+                    {category.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -61,7 +59,9 @@ const Footer = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                <span className="text-gray-300 text-sm">Vinningen, Germany</span>
+                <span className="text-gray-300 text-sm">
+                  Vinningen, Germany
+                </span>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-emerald-400 flex-shrink-0" />
@@ -69,15 +69,17 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                <span className="text-gray-300 text-sm">vhglovbaltrader@gmail.com</span>
+                <span className="text-gray-300 text-sm">
+                  vhglovbaltrader@gmail.com
+                </span>
               </div>
             </div>
 
-            <div className="mt-8">
+            {/* <div className="mt-8">
               <h5 className="font-semibold mb-3">Newsletter</h5>
               <div className="flex">
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   placeholder="Your email"
                   className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-white placeholder-gray-400"
                 />
@@ -85,7 +87,7 @@ const Footer = () => {
                   <Send className="w-4 h-4" />
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -95,9 +97,24 @@ const Footer = () => {
             © 2025 VH Global Trader. All rights reserved.
           </p>
           <div className="flex space-x-6 text-sm">
-            <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors">Privacy Policy</a>
-            <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors">Terms of Service</a>
-            <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors">Imprint</a>
+            <a
+              href="#"
+              className="text-gray-400 hover:text-emerald-400 transition-colors"
+            >
+              Privacy Policy
+            </a>
+            <a
+              href="#"
+              className="text-gray-400 hover:text-emerald-400 transition-colors"
+            >
+              Terms of Service
+            </a>
+            <a
+              href="#"
+              className="text-gray-400 hover:text-emerald-400 transition-colors"
+            >
+              Imprint
+            </a>
           </div>
         </div>
       </div>
