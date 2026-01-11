@@ -92,7 +92,7 @@ const Header = () => {
           >
             <img
               src="/images/logo.webp"
-              alt="VH Global Logo"
+              alt="VHN Global Logo"
               className="h-16 w-auto ml-1"
               fetchPriority="high"
             />

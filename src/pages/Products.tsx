@@ -187,9 +187,17 @@ const Products = () => {
                   {mainCategoriesData?.data?.map((category) => (
                     <button
                       key={category.productMainCategoryId}
+<<<<<<< Updated upstream
                       onClick={() =>
                         handleMainCategoryChange(category.productMainCategoryId)
                       }
+=======
+                      onClick={() => {
+                        setSelectedMainCategory(category.productMainCategoryId);
+                        setSelectedSubCategory("all");
+                        setCurrentPage(0);
+                      }}
+>>>>>>> Stashed changes
                       className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                         selectedMainCategory === category.productMainCategoryId
                           ? "bg-emerald-100 text-emerald-700 font-medium"
@@ -210,7 +218,14 @@ const Products = () => {
                   </h4>
                   <div className="space-y-2">
                     <button
+<<<<<<< Updated upstream
                       onClick={() => handleSubCategoryChange("all")}
+=======
+                      onClick={() => {
+                        setSelectedSubCategory("all");
+                        setCurrentPage(0);
+                      }}
+>>>>>>> Stashed changes
                       className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                         selectedSubCategory === "all"
                           ? "bg-cyan-100 text-cyan-700 font-medium"
@@ -222,11 +237,17 @@ const Products = () => {
                     {filteredSubCategories.map((subCategory) => (
                       <button
                         key={subCategory.productSubCategoryId}
+<<<<<<< Updated upstream
                         onClick={() =>
                           handleSubCategoryChange(
+=======
+                        onClick={() => {
+                          setSelectedSubCategory(
+>>>>>>> Stashed changes
                             subCategory.productSubCategoryId
-                          )
-                        }
+                          );
+                          setCurrentPage(0);
+                        }}
                         className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                           selectedSubCategory ===
                           subCategory.productSubCategoryId
@@ -270,7 +291,7 @@ const Products = () => {
                       : "text-gray-500 hover:bg-gray-100"
                   }`}
                 >
-                  <List className="w-5 h-5" />
+                  {/* <List className="w-5 h-5" /> */}
                 </button>
               </div>
             </div>

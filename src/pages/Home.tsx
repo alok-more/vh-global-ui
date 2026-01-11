@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ArrowRight,
   Leaf,
@@ -65,7 +66,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-heading font-black text-gray-900 mb-3">
-              Why Choose VH Global Trader
+              Why Choose VHN Global Trader
             </h2>
             <p className="text-xl text-gray-500 max-w-3xl mx-auto">
               Over 55 years of expertise in aquarium technology and plant
@@ -132,7 +133,7 @@ const Home = () => {
                   to={`/products?category=${category.productMainCategoryId}`}
                   className="group cursor-pointer"
                 >
-                  <div className="relative overflow-hidden mx-auto rounded-xl mb-4">
+                  <div className="relative overflow-hidden mx-auto rounded-xl mb-4 w-[90%]">
                     <img
                       src={`/images/${category.name
                         .toLowerCase()
@@ -142,12 +143,14 @@ const Home = () => {
                       className="w-full h-[370px] object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-emerald-700 transition-colors">
-                    {category.name}
-                  </h3>
-                  <p className="text-gray-500 text-sm">
-                    {category.shortDescription}
-                  </p>
+                  <div className="text-center">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-emerald-700 transition-colors">
+                      {category.name}
+                    </h3>
+                    <p className="text-gray-500 text-sm">
+                      {category.shortDescription}
+                    </p>
+                  </div>
                 </Link>
               ))}
             </div>
@@ -164,14 +167,12 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl font-bold text-gray-900 mb-6 text-center">
                 55 Years of
                 <span className="text-emerald-700 block">Innovation</span>
               </h2>
-              <p className="text-lg text-gray-500 mb-8 leading-relaxed">
-                Since 1966, VH Global Trader has been at the forefront of
-                aquarium technology, developing innovative solutions that help
-                aquascapers create and maintain breathtaking underwater worlds.
+              <p className="text-lg text-gray-500 mb-8 leading-relaxed text-center">
+                At VHN Global, we bring you premium nursery and farming plants—delivered across India and worldwide—making greenery accessible, sustainable, and beautiful for every space.
               </p>
 
               <div className="grid sm:grid-cols-3 gap-6 mb-8">
@@ -200,13 +201,15 @@ const Home = () => {
                 </div>
               </div>
 
-              <Link
-                to="/company"
-                className="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors group"
-              >
-                Learn More
-                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              <div className="flex justify-center">
+                <Link
+                  to="/company"
+                  className="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors group"
+                >
+                  Learn More
+                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
             </div>
 
             <div className="relative">

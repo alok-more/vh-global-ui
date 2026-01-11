@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
 
@@ -55,11 +56,11 @@ const Contact = () => {
                       Address
                     </h3>
                     <p className="text-gray-500">
-                      Dennerle GmbH
+                      Shewalewadi Road,
                       <br />
-                      Krötenbrunnenstraße 30
+                      Hadapsar, Pune
                       <br />
-                      76889 Vinningen, Germany
+                      Maharashtra 412307
                     </p>
                   </div>
                 </div>
@@ -84,9 +85,7 @@ const Contact = () => {
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
                     <p className="text-gray-500">
-                      vhglovbaltrader@gmail.com
-                      <br />
-                      support@dennerle.com
+                      vhnglobaltrader@gmail.com
                     </p>
                   </div>
                 </div>
@@ -199,6 +198,26 @@ const Contact = () => {
                   </div>
                 </div>
 
+<<<<<<< Updated upstream
+=======
+                {/* Contact Number */}
+                <div>
+                  <label htmlFor="contact" className="block text-sm font-medium text-gray-700 mb-2">
+                    Contact Number
+                  </label>
+                  <input
+                    type="tel"
+                    id="contact"
+                    name="contact"
+                    value={formData.contact}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    placeholder="Enter your contact number"
+                  />
+                </div>
+
+                {/* Subject */}
+>>>>>>> Stashed changes
                 <div>
                   <label
                     htmlFor="subject"
