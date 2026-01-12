@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Filter, Grid, List, Search, Package } from "lucide-react";
+import { Filter, Grid, Search, Package } from "lucide-react";
 import {
   useMainCategories,
   useSubCategories,
@@ -200,9 +200,11 @@ const Products = () => {
                   {mainCategoriesData?.data?.map((category) => (
                     <button
                       key={category.productMainCategoryId}
-                      onClick={() =>
-                        setSelectedMainCategory(category.productMainCategoryId)
-                      }
+                      onClick={() => {
+                        setSelectedMainCategory(category.productMainCategoryId);
+                        setSelectedSubCategory("all");
+                        setCurrentPage(0);
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                         selectedMainCategory === category.productMainCategoryId
                           ? "bg-emerald-100 text-emerald-700 font-medium"
@@ -216,43 +218,36 @@ const Products = () => {
               </div>
 
               {/* Sub Categories */}
-              {filteredSubCategories.length > 0 && (
-                <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-3">
-                    Sub Categories
-                  </h4>
-                  <div className="space-y-2">
-                    <button
-                      onClick={() => setSelectedSubCategory("all")}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                        selectedSubCategory === "all"
-                          ? "bg-cyan-100 text-cyan-700 font-medium"
-                          : "text-gray-700 hover:bg-gray-100"
-                      }`}
-                    >
-                      All Sub Categories
-                    </button>
-                    {filteredSubCategories.map((subCategory) => (
-                      <button
-                        key={subCategory.productSubCategoryId}
-                        onClick={() =>
-                          setSelectedSubCategory(
-                            subCategory.productSubCategoryId
-                          )
-                        }
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                          selectedSubCategory ===
-                          subCategory.productSubCategoryId
-                            ? "bg-cyan-100 text-cyan-700 font-medium"
-                            : "text-gray-700 hover:bg-gray-100"
-                        }`}
-                      >
-                        {subCategory.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <button
+                onClick={() => {
+                  setSelectedSubCategory("all");
+                  setCurrentPage(0);
+                }}
+                className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                  selectedSubCategory === "all"
+                    ? "bg-cyan-100 text-cyan-700 font-medium"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                All Sub Categories
+              </button>
+
+              {filteredSubCategories.map((subCategory) => (
+                <button
+                  key={subCategory.productSubCategoryId}
+                  onClick={() => {
+                    setSelectedSubCategory(subCategory.productSubCategoryId);
+                    setCurrentPage(0);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                    selectedSubCategory === subCategory.productSubCategoryId
+                      ? "bg-cyan-100 text-cyan-700 font-medium"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  {subCategory.name}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -283,7 +278,7 @@ const Products = () => {
                       : "text-gray-500 hover:bg-gray-100"
                   }`}
                 >
-                  <List className="w-5 h-5" />
+                  {/* <List className="w-5 h-5" /> */}
                 </button>
               </div>
             </div>

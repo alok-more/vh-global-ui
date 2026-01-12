@@ -21,12 +21,36 @@ const ProductModal: React.FC<ProductModalProps> = ({
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [thumbnails, setThumbnails] = useState<string[]>([]);
 
+  const getCurrencyFromTimeZone = () => {
+    const timeZone =
+      Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    // console.log("🚀 ~ timeZone:", timeZone);
+
+    if (timeZone.startsWith("Asia/Kolkata") || timeZone.startsWith("Asia/Calcutta"))
+      return { locale: "en-IN", currency: "INR" };
+
+    if (timeZone.startsWith("America"))
+      return { locale: "en-US", currency: "USD" };
+
+    if (timeZone.startsWith("Europe"))
+      return { locale: "de-DE", currency: "EUR" };
+
+    return { locale: "en-US", currency: "USD" };
+  };
+
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("de-DE", {
+    const { locale, currency } = getCurrencyFromTimeZone();
+
+    // console.log("🚀 ~ locale:", locale);
+    // console.log("🚀 ~ currency:", currency);
+
+    return new Intl.NumberFormat(locale, {
       style: "currency",
-      currency: "EUR",
+      currency,
     }).format(price);
   };
+
 
   const fixImageUrl = (url: string): string => {
     if (!url) return "";
