@@ -65,7 +65,7 @@ const ProductDetail = () => {
     // To: http://localhost:8080/images/filename.webp
     if (url.includes("/images/uploads/images/")) {
       const filename = url.split("/").pop()?.replace(".png", ".webp") || "";
-      return `http://localhost:8080/images/${filename}`;
+      return `${import.meta.env.VITE_API_URL}/images/${filename}`;
     }
 
     return url;

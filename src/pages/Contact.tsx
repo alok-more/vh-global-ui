@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
 
@@ -10,7 +11,10 @@ const Contact = () => {
     message: "",
   });
 
-  const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [status, setStatus] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,13 +29,28 @@ const Contact = () => {
       });
 
       if (res.status === 200 || res.type === "opaque") {
-        setStatus({ type: "success", message: "Your message has been sent successfully!" });
-        setFormData({ name: "", email: "", contact: "", subject: "", message: "" });
+        setStatus({
+          type: "success",
+          message: "Your message has been sent successfully!",
+        });
+        setFormData({
+          name: "",
+          email: "",
+          contact: "",
+          subject: "",
+          message: "",
+        });
       } else {
-        setStatus({ type: "error", message: "There was an error sending your message." });
+        setStatus({
+          type: "error",
+          message: "There was an error sending your message.",
+        });
       }
     } catch (err) {
-      setStatus({ type: "error", message: "Network error. Please try again later." });
+      setStatus({
+        type: "error",
+        message: "Network error. Please try again later.",
+      });
     }
 
     // Hide banner automatically after 5 seconds
@@ -39,7 +58,9 @@ const Contact = () => {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     setFormData({
       ...formData,
@@ -53,7 +74,9 @@ const Contact = () => {
         {/* Header */}
         <div className="bg-white rounded-xl shadow-sm p-8 mb-8 text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
-          <p className="text-xl text-gray-500">Get in touch with our aquascaping experts</p>
+          <p className="text-xl text-gray-500">
+            Get in touch with our aquascaping experts
+          </p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -74,11 +97,11 @@ const Contact = () => {
                       Address
                     </h3>
                     <p className="text-gray-500">
-                      Dennerle GmbH
+                      Shewalewadi Road,
                       <br />
-                      Krötenbrunnenstraße 30
+                      Hadapsar, Pune
                       <br />
-                      76889 Vinningen, Germany
+                      Maharashtra 412307
                     </p>
                   </div>
                 </div>
@@ -102,11 +125,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-                    <p className="text-gray-500">
-                      vhglovbaltrader@gmail.com
-                      <br />
-                      support@dennerle.com
-                    </p>
+                    <p className="text-gray-500">vhnglobaltrader@gmail.com</p>
                   </div>
                 </div>
 
@@ -194,7 +213,10 @@ const Contact = () => {
                 {/* Full Name + Email */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Full Name *
                     </label>
                     <input
@@ -210,7 +232,10 @@ const Contact = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Email Address *
                     </label>
                     <input
@@ -225,10 +250,31 @@ const Contact = () => {
                     />
                   </div>
                 </div>
+                {/* Contact Number */}
+                <div>
+                  <label
+                    htmlFor="contact"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Contact Number
+                  </label>
+                  <input
+                    type="tel"
+                    id="contact"
+                    name="contact"
+                    value={formData.contact}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    placeholder="Enter your contact number"
+                  />
+                </div>
 
                 {/* Subject */}
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="subject"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Subject *
                   </label>
                   <select
@@ -243,14 +289,19 @@ const Contact = () => {
                     <option value="product-info">Product Information</option>
                     <option value="technical-support">Technical Support</option>
                     <option value="dealer-inquiry">Dealer Inquiry</option>
-                    <option value="consultation">Aquascaping Consultation</option>
+                    <option value="consultation">
+                      Aquascaping Consultation
+                    </option>
                     <option value="other">Other</option>
                   </select>
                 </div>
 
                 {/* Message */}
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Message *
                   </label>
                   <textarea

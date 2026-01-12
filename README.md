@@ -1,6 +1,6 @@
-# VH Global Trader E-Commerce Website
+# VHN Global Trader E-Commerce Website
 
-A modern, fully-featured e-commerce website for VH Global Trader aquascaping products with complete API integration.
+A modern, fully-featured e-commerce website for VHN Global Trader aquascaping products with complete API integration.
 
 ## Features
 
@@ -119,6 +119,6 @@ src/
 
 - The application handles both local images (via API) and external URLs
 - All API calls include proper error handling and loading states
-- The design follows VH Global Trader's aquascaping theme with nature-inspired colors
+- The design follows VHN Global Trader's aquascaping theme with nature-inspired colors
 - Responsive design ensures optimal viewing on all devices
 - Component architecture follows React best practices with proper separation of concerns

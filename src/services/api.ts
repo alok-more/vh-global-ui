@@ -11,7 +11,7 @@ import {
   PaginatedResponse,
 } from "../types/api";
 
-const API_BASE_URL = "http://localhost:8080/";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -107,6 +107,7 @@ export const productApi = {
     file: File
   ): Promise<ApiResponse<ProductResponse>> => {
     const formData = new FormData();
+    // console.log("🚀 ~ formData:", formData)
     formData.append("file", file);
     return api
       .post(`/api/v1/products/upload-image/${productId}`, formData, {

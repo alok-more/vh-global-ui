@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { Eye, X } from "lucide-react";
 import { ProductResponse } from "../types/api";
@@ -16,34 +17,56 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    contact: "",
     subject: `Inquiry about ${product.name}`,
     message: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
 
-  // ✅ status banner state
+  const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<null | {
     type: "success" | "error";
     message: string;
   }>(null);
 
+  /* -------------------- Helpers -------------------- */
+
+  const getCurrencyFromTimeZone = () => {
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    if (timeZone.startsWith("Asia")) return { locale: "en-IN", currency: "INR" };
+    if (timeZone.startsWith("America"))
+      return { locale: "en-US", currency: "USD" };
+    if (timeZone.startsWith("Europe"))
+      return { locale: "de-DE", currency: "EUR" };
+
+    return { locale: "en-US", currency: "USD" };
+  };
+
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("de-DE", {
+    const { locale, currency } = getCurrencyFromTimeZone();
+    return new Intl.NumberFormat(locale, {
       style: "currency",
-      currency: "EUR",
+      currency,
     }).format(price);
   };
 
-  const getImageUrl = (imageUrl: string) => {
-    if (imageUrl?.startsWith("http")) {
-      return imageUrl;
-    }
-    return imageUrl
-      ? productApi.getImage(imageUrl)
-      : "https://images.pexels.com/photos/1078736/pexels-photo-1078736.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop";
+  const getImageUrl = (imageUrl?: string) => {
+    if (!imageUrl)
+      return "https://images.pexels.com/photos/1078736/pexels-photo-1078736.jpeg";
+    if (imageUrl.startsWith("http")) return imageUrl;
+    return productApi.getImage(imageUrl);
+  };
+
+  /* -------------------- Contact Form -------------------- */
+
+  const handleContactChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleContactSubmit = async (e: React.FormEvent) => {
@@ -51,297 +74,162 @@ const ProductCard: React.FC<ProductCardProps> = ({
     setIsLoading(true);
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      setStatus({ type: "error", message: "⚠️ Please enter a valid email address" });
+      setStatus({ type: "error", message: "Invalid email address" });
       setIsLoading(false);
       return;
     }
-    if (formData.message.length > 1000) {
-      setStatus({ type: "error", message: "⚠️ Message cannot exceed 1000 characters" });
-      setIsLoading(false);
-      return;
-    }
-
-    const appsScriptUrl = import.meta.env.VITE_APP_SCRIPT_EXCEL_URL || "";
 
     try {
-      await fetch(appsScriptUrl, {
+      await fetch(import.meta.env.VITE_APP_SCRIPT_EXCEL_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
         mode: "no-cors",
       });
 
-      setStatus({ type: "success", message: "✅ Your message has been sent successfully!" });
+      setStatus({
+        type: "success",
+        message: "Your inquiry has been sent successfully!",
+      });
+
       setFormData({
         name: "",
         email: "",
+        contact: "",
         subject: `Inquiry about ${product.name}`,
         message: "",
       });
 
-      // auto-hide after 5s
       setTimeout(() => setStatus(null), 5000);
-    } catch (error) {
-      setStatus({ type: "error", message: "❌ There was an error sending your message" });
+    } catch {
+      setStatus({ type: "error", message: "Failed to send message" });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleContactChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  /* -------------------- Images -------------------- */
+
+  const [mainImage, setMainImage] = useState(
+    getImageUrl(product.primaryImageUrl)
+  );
+
+  const thumbnails =
+    product.additionalImageUrls?.map(getImageUrl) || [];
+
+  /* -------------------- UI -------------------- */
 
   return (
     <>
-      <div
-        className={`bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 group ${
-          viewMode === "list" ? "flex" : ""
-        }`}
-      >
-        <div
-          className={`relative ${
-            viewMode === "list" ? "w-48 flex-shrink-0" : ""
-          }`}
-        >
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden group">
+        <div className="relative">
           <img
-            src={getImageUrl(product.primaryImageUrl)}
+            src={mainImage}
             alt={product.name}
-            className={`object-cover group-hover:scale-105 transition-transform duration-300 ${
-              viewMode === "list" ? "w-full h-32" : "w-full h-48"
-            }`}
+            className="w-full h-48 object-cover group-hover:scale-105 transition-transform"
           />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
 
-          {/* Quick Actions */}
-          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <button
-              onClick={() => {
-                if (onViewDetails) {
-                  onViewDetails(product);
-                } else {
-                  setIsDetailsModalOpen(true);
-                }
-              }}
-              className="bg-white/90 hover:bg-white p-2 rounded-lg shadow-lg transition-colors"
-              aria-label="View product details"
-            >
-              <Eye className="w-4 h-4 text-gray-700" />
-            </button>
-          </div>
+          <button
+            onClick={() =>
+              onViewDetails
+                ? onViewDetails(product)
+                : setIsDetailsModalOpen(true)
+            }
+            className="absolute top-2 right-2 bg-white p-2 rounded-lg shadow"
+          >
+            <Eye className="w-4 h-4" />
+          </button>
         </div>
 
-        <div className="p-6 flex-1 flex flex-col">
-          <div className="flex-1">
-            <div className="flex items-start justify-between mb-2">
-              <h3 className="font-bold text-lg text-gray-900 group-hover:text-emerald-700 transition-colors">
-                {product.name}
-              </h3>
-              <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">
-                {product.productSubCategory.name}
-              </span>
-            </div>
+        <div className="p-6">
+          <h3 className="font-bold text-lg">{product.name}</h3>
 
-            {product.shortDescription && (
-              <p className="text-gray-600 mb-4 text-sm leading-relaxed">
-                {product.shortDescription}
-              </p>
-            )}
+          <p className="text-sm text-gray-600 mt-2">
+            {product.shortDescription}
+          </p>
 
-            <div className="text-xs text-gray-500 mb-4">
-              Min. Quantity: {product.minimumQuantity}
-            </div>
-          </div>
-
-          <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+          <div className="mt-4 flex justify-between items-center">
             <span className="text-emerald-600 font-bold text-xl">
               {formatPrice(product.price)}
             </span>
+
             <button
               onClick={() => setIsContactModalOpen(true)}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 group"
+              className="bg-emerald-600 text-white px-4 py-2 rounded-lg"
             >
-              <span>Enquire Now</span>
+              Enquire
             </button>
           </div>
         </div>
       </div>
 
-      {/* Contact Form Modal */}
+      {/* ---------------- Contact Modal ---------------- */}
       {isContactModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl w-full max-w-lg relative">
             <button
               onClick={() => setIsContactModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              className="absolute top-4 right-4"
             >
-              <X className="w-6 h-6" />
+              <X />
             </button>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Inquire About {product.name}
+
+            <h2 className="text-xl font-bold mb-4">
+              Inquire about {product.name}
             </h2>
 
-            {/* ✅ Status Banner */}
             {status && (
-              <div
-                className={`mb-4 p-3 rounded-lg text-sm font-medium ${
+              <p
+                className={`mb-3 text-sm ${
                   status.type === "success"
-                    ? "bg-green-100 text-green-800 border border-green-300"
-                    : "bg-red-100 text-red-800 border border-red-300"
+                    ? "text-green-600"
+                    : "text-red-600"
                 }`}
               >
                 {status.message}
-              </div>
+              </p>
             )}
 
-            <form onSubmit={handleContactSubmit} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleContactChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleContactChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Subject *
-                </label>
-                <input
-                  type="text"
-                  name="subject"
-                  value={formData.subject}
-                  readOnly
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Message *
-                </label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleContactChange}
-                  required
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 resize-none"
-                ></textarea>
-              </div>
-
-              <div className="flex justify-end space-x-4">
-                <button
-                  type="button"
-                  onClick={() => setIsContactModalOpen(false)}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 disabled:opacity-50"
-                >
-                  <span>{isLoading ? "Sending..." : "Send Inquiry"}</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Product Details Modal */}
-      {isDetailsModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={() => setIsDetailsModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              {product.name}
-            </h2>
-            <div className="space-y-6">
-              <img
-                src={getImageUrl(product.primaryImageUrl)}
-                alt={product.name}
-                className="w-full h-64 object-cover rounded-lg"
+            <form onSubmit={handleContactSubmit} className="space-y-4">
+              <input
+                name="name"
+                placeholder="Name"
+                value={formData.name}
+                onChange={handleContactChange}
+                required
+                className="w-full border p-2 rounded"
               />
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">Price</h3>
-                <p className="text-emerald-600 font-bold text-xl">
-                  {formatPrice(product.price)}
-                </p>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Category
-                </h3>
-                <p className="text-gray-600">
-                  {product.productSubCategory.name}
-                </p>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Minimum Quantity
-                </h3>
-                <p className="text-gray-600">{product.minimumQuantity}</p>
-              </div>
-              {product.shortDescription && (
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Description
-                  </h3>
-                  <p className="text-gray-600">{product.shortDescription}</p>
-                </div>
-              )}
-              <div className="flex justify-end space-x-4">
-                <button
-                  type="button"
-                  onClick={() => setIsDetailsModalOpen(false)}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                >
-                  Close
-                </button>
-                <button
-                  onClick={() => {
-                    setIsDetailsModalOpen(false);
-                    setIsContactModalOpen(true);
-                  }}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
-                >
-                  <span>Inquire About This Product</span>
-                </button>
-              </div>
-            </div>
+              <input
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleContactChange}
+                required
+                className="w-full border p-2 rounded"
+              />
+              <input
+                name="contact"
+                placeholder="Contact"
+                value={formData.contact}
+                onChange={handleContactChange}
+                className="w-full border p-2 rounded"
+              />
+              <textarea
+                name="message"
+                placeholder="Message"
+                value={formData.message}
+                onChange={handleContactChange}
+                required
+                className="w-full border p-2 rounded"
+              />
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="bg-emerald-600 text-white px-4 py-2 rounded"
+              >
+                {isLoading ? "Sending..." : "Send"}
+              </button>
+            </form>
           </div>
         </div>
       )}
