@@ -235,11 +235,12 @@ const Products = () => {
                     {filteredSubCategories.map((subCategory) => (
                       <button
                         key={subCategory.productSubCategoryId}
-                        onClick={() =>
+                        onClick={() => {
                           setSelectedSubCategory(
                             subCategory.productSubCategoryId
-                          )
-                        }
+                          );
+                          setCurrentPage(0);
+                        }}
                         className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                           selectedSubCategory ===
                           subCategory.productSubCategoryId
@@ -283,7 +284,7 @@ const Products = () => {
                       : "text-gray-500 hover:bg-gray-100"
                   }`}
                 >
-                  <List className="w-5 h-5" />
+                  {/* <List className="w-5 h-5" /> */}
                 </button>
               </div>
             </div>
@@ -319,6 +320,7 @@ const Products = () => {
                     />
                   ))}
                 </div>
+
                 {/* Pagination */}
                 <div className="flex justify-center items-center mt-8 space-x-4">
                   <button
