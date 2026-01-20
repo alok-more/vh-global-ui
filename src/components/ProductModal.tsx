@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { X, Package, Tag } from "lucide-react";
 import { ProductResponse } from "../types/api";
 import { productApi } from "../services/api";
@@ -14,18 +14,13 @@ const ProductModal: React.FC<ProductModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  if (!isOpen || !product) return null;
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  /* ---------------- STATE ---------------- */
   const [mainImage, setMainImage] = useState<string>("");
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [thumbnails, setThumbnails] = useState<string[]>([]);
 
+  /* ---------------- HELPERS ---------------- */
   const getCurrencyFromTimeZone = () => {
-    const timeZone =
-      Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    // console.log("🚀 ~ timeZone:", timeZone);
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     if (timeZone.startsWith("Asia/Kolkata") || timeZone.startsWith("Asia/Calcutta"))
       return { locale: "en-IN", currency: "INR" };
@@ -41,10 +36,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
   const formatPrice = (price: number) => {
     const { locale, currency } = getCurrencyFromTimeZone();
-
-    // console.log("🚀 ~ locale:", locale);
-    // console.log("🚀 ~ currency:", currency);
-
     return new Intl.NumberFormat(locale, {
       style: "currency",
       currency,
@@ -61,127 +52,110 @@ const ProductModal: React.FC<ProductModalProps> = ({
     return url;
   };
 
-  const getImageUrl = (imageUrl: string) => {
+  const getImageUrl = (imageUrl?: string) => {
     if (!imageUrl) return "/images/nursary-product.png";
-    if (imageUrl.startsWith("http")) {
-      return fixImageUrl(imageUrl);
-    }
+    if (imageUrl.startsWith("http")) return fixImageUrl(imageUrl);
     return productApi.getImage(imageUrl);
   };
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  /* ---------------- EFFECT ---------------- */
   useEffect(() => {
-    if (product) {
-      const primary = getImageUrl(product.primaryImageUrl);
-      const additional = (product.additionalImageUrls || []).map(getImageUrl);
+    if (!product) return;
 
-      setMainImage(primary);
-      setThumbnails(additional);
-    }
+    const primary = getImageUrl(product.primaryImageUrl);
+    const additional = (product.additionalImageUrls || []).map(getImageUrl);
+
+    setMainImage(primary);
+    setThumbnails(additional);
   }, [product]);
 
+  /* ---------------- ACTIONS ---------------- */
   const handleThumbnailClick = (clickedImage: string) => {
     if (clickedImage === mainImage) return;
 
-  // Swap logic
     setThumbnails((prev) => {
       const updated = prev.filter((img) => img !== clickedImage);
-      return [mainImage, ...updated]; // push old main into thumbs
+      return [mainImage, ...updated];
     });
 
     setMainImage(clickedImage);
   };
 
+  /* ---------------- GUARD ---------------- */
+  if (!isOpen || !product) return null;
+
+  /* ---------------- UI ---------------- */
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-40">
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-gray-200">
+        <div className="flex justify-between items-center p-6 border-b">
           <h2 className="text-2xl font-bold text-gray-900">{product.name}</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg"
           >
             <X className="w-6 h-6 text-gray-500" />
           </button>
         </div>
 
-        <div className="p-6">
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Images */}
-            <div>
-              <div className="mb-4">
-                <img
-                  src={mainImage}
-                  alt={product.name}
-                  className="w-full h-full object-cover rounded-xl"
-                />
-              </div>
-
-              {thumbnails.length > 0 && (
-                <div className="grid grid-cols-4 gap-2">
-                  {thumbnails.map((thumb, index) => (
-                    <img
-                      key={index}
-                      src={thumb}
-                      alt={`${product.name} ${index + 1}`}
-                      className={`w-full h-20 object-cover rounded-lg cursor-pointer transition-opacity ${
-                        mainImage === thumb
-                          ? "ring-2 ring-emerald-500"
-                          : "hover:opacity-80"
-                      }`}
-                      onClick={() => handleThumbnailClick(thumb)}
-                    />
-                  ))}
-                </div>
-              )}
+        <div className="p-6 grid lg:grid-cols-2 gap-8">
+          {/* Images */}
+          <div>
+            <div className="mb-4 bg-gray-50 rounded-xl flex items-center justify-center">
+              <img
+                src={mainImage}
+                alt={product.name}
+                className="max-h-96 object-contain rounded-xl"
+              />
             </div>
 
-            {/* Product Details */}
-            <div>
-              <div className="mb-6">
-                <div className="flex items-center space-x-2 mb-4">
-                  <Tag className="w-5 h-5 text-emerald-600" />
-                  <span className="text-sm text-gray-500">
-                    {product.productSubCategory.productMainCategory.name} →{" "}
-                    {product.productSubCategory.name}
-                  </span>
-                </div>
-
-                <div className="text-3xl font-bold text-emerald-600 mb-4">
-                  {formatPrice(product.price)}
-                </div>
-
-                <div className="flex items-center space-x-2 mb-6">
-                  <Package className="w-5 h-5 text-gray-500" />
-                  <span className="text-sm text-gray-500">
-                    Minimum quantity: {product.minimumQuantity}
-                  </span>
-                </div>
+            {thumbnails.length > 0 && (
+              <div className="grid grid-cols-4 gap-2">
+                {thumbnails.map((thumb, idx) => (
+                  <img
+                    key={idx}
+                    src={thumb}
+                    onClick={() => handleThumbnailClick(thumb)}
+                    className={`h-20 w-full object-cover rounded-lg cursor-pointer ${
+                      mainImage === thumb
+                        ? "ring-2 ring-emerald-500"
+                        : "hover:opacity-80"
+                    }`}
+                  />
+                ))}
               </div>
+            )}
+          </div>
 
-              {product.shortDescription && (
-                <div className="mb-6">
-                  <h3 className="font-semibold text-gray-900 mb-2">
-                    Description
-                  </h3>
-                  <p className="text-gray-500 leading-relaxed">
-                    {product.shortDescription}
-                  </p>
-                </div>
-              )}
-
-              {product.longDescription && (
-                <div className="mb-8">
-                  <h3 className="font-semibold text-gray-900 mb-2">
-                    Detailed Information
-                  </h3>
-                  <p className="text-gray-500 leading-relaxed">
-                    {product.longDescription}
-                  </p>
-                </div>
-              )}
+          {/* Details */}
+          <div>
+            <div className="flex items-center gap-2 mb-4 text-sm text-gray-500">
+              <Tag className="w-4 h-4 text-emerald-600" />
+              {product.productSubCategory.productMainCategory.name} →{" "}
+              {product.productSubCategory.name}
             </div>
+
+            <div className="text-3xl font-bold text-emerald-600 mb-4">
+              {formatPrice(product.price)}
+            </div>
+
+            <div className="flex items-center gap-2 mb-6 text-sm text-gray-500">
+              <Package className="w-4 h-4" />
+              Minimum quantity: {product.minimumQuantity}
+            </div>
+
+            {product.shortDescription && (
+              <p className="text-gray-600 mb-4">
+                {product.shortDescription}
+              </p>
+            )}
+
+            {product.longDescription && (
+              <p className="text-gray-600 leading-relaxed">
+                {product.longDescription}
+              </p>
+            )}
           </div>
         </div>
       </div>

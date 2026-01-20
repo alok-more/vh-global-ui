@@ -32,14 +32,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
     message: string;
   }>(null);
 
-  /* -------------------- Helpers -------------------- */
-
+  /* ---------------- Currency ---------------- */
   const getCurrencyFromTimeZone = () => {
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    if (timeZone.startsWith("Asia")) return { locale: "en-IN", currency: "INR" };
+    if (
+      timeZone.startsWith("Asia/Kolkata") ||
+      timeZone.startsWith("Asia/Calcutta")
+    )
+      return { locale: "en-IN", currency: "INR" };
+
     if (timeZone.startsWith("America"))
       return { locale: "en-US", currency: "USD" };
+
     if (timeZone.startsWith("Europe"))
       return { locale: "de-DE", currency: "EUR" };
 
@@ -54,30 +59,50 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }).format(price);
   };
 
-  const getImageUrl = (imageUrl?: string) => {
-    if (!imageUrl)
-      return "https://images.pexels.com/photos/1078736/pexels-photo-1078736.jpeg";
-    if (imageUrl.startsWith("http")) return imageUrl;
-    return productApi.getImage(imageUrl);
+  /* ---------------- Image Handling ---------------- */
+  const fixImageUrl = (url: string): string => {
+    if (!url) return "";
+
+    if (url.includes("/images/uploads/images/")) {
+      const filename = url.split("/").pop()?.replace(".png", ".webp") || "";
+      return `http://localhost:8080/images/${filename}`;
+    }
+    return url;
   };
 
-  /* -------------------- Contact Form -------------------- */
-
-  const handleContactChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const getImageUrl = (imageUrl: string) => {
+    if (imageUrl?.startsWith("http")) {
+      return fixImageUrl(imageUrl);
+    }
+    return imageUrl
+      ? productApi.getImage(imageUrl)
+      : "https://images.pexels.com/photos/1078736/pexels-photo-1078736.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop";
   };
 
+  /* ---------------- Contact Form ---------------- */
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      setStatus({ type: "error", message: "Invalid email address" });
+      setStatus({
+        type: "error",
+        message: "⚠️ Please enter a valid email address",
+      });
       setIsLoading(false);
       return;
     }
+
+    if (formData.message.length > 1000) {
+      setStatus({
+        type: "error",
+        message: "⚠️ Message cannot exceed 1000 characters",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    const appsScriptUrl = import.meta.env.VITE_APP_SCRIPT_EXCEL_URL || "";
 
     try {
       await fetch(import.meta.env.VITE_APP_SCRIPT_EXCEL_URL, {
@@ -89,9 +114,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       setStatus({
         type: "success",
-        message: "Your inquiry has been sent successfully!",
+        message: "✅ Your message has been sent successfully!",
       });
-
       setFormData({
         name: "",
         email: "",
@@ -102,62 +126,101 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       setTimeout(() => setStatus(null), 5000);
     } catch {
-      setStatus({ type: "error", message: "Failed to send message" });
+      setStatus({
+        type: "error",
+        message: "❌ There was an error sending your message",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  /* -------------------- Images -------------------- */
+  const handleContactChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  const [mainImage, setMainImage] = useState(
-    getImageUrl(product.primaryImageUrl)
+  /* ---------------- Image Gallery ---------------- */
+  const [mainImage, setMainImage] = useState<string>(
+    getImageUrl(product.primaryImageUrl),
+  );
+  const [thumbnails, setThumbnails] = useState<string[]>(
+    (product.additionalImageUrls || []).map(getImageUrl),
   );
 
-  const thumbnails =
-    product.additionalImageUrls?.map(getImageUrl) || [];
+  const handleThumbnailClick = (clickedImage: string) => {
+    if (clickedImage === mainImage) return;
 
-  /* -------------------- UI -------------------- */
+    setThumbnails((prev) => {
+      const updated = prev.filter((img) => img !== clickedImage);
+      return [mainImage, ...updated];
+    });
 
+    setMainImage(clickedImage);
+  };
+
+  /* ---------------- UI ---------------- */
   return (
     <>
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden group">
-        <div className="relative">
-          <img
-            src={mainImage}
-            alt={product.name}
-            className="w-full h-48 object-cover group-hover:scale-105 transition-transform"
-          />
+      <div
+        className={`bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 group ${
+          viewMode === "list" ? "flex" : ""
+        }`}
+      >
+        <div
+          className={`relative ${viewMode === "list" ? "w-48 flex-shrink-0" : ""}`}
+        >
+          <div className="w-full h-56 flex items-center justify-center bg-gray-50 overflow-hidden">
+            <img
+              src={getImageUrl(product.primaryImageUrl)}
+              alt={product.name}
+              className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
 
-          <button
-            onClick={() =>
-              onViewDetails
-                ? onViewDetails(product)
-                : setIsDetailsModalOpen(true)
-            }
-            className="absolute top-2 right-2 bg-white p-2 rounded-lg shadow"
-          >
-            <Eye className="w-4 h-4" />
-          </button>
+          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={() =>
+                onViewDetails
+                  ? onViewDetails(product)
+                  : setIsDetailsModalOpen(true)
+              }
+              className="bg-white/90 hover:bg-white p-2 rounded-lg shadow-lg"
+            >
+              <Eye className="w-4 h-4 text-gray-700" />
+            </button>
+          </div>
         </div>
 
-        <div className="p-6">
-          <h3 className="font-bold text-lg">{product.name}</h3>
+        <div className="p-6 flex-1 flex flex-col">
+          <div className="flex items-start justify-between mb-2">
+            <h3 className="font-bold text-lg text-gray-900">{product.name}</h3>
+            <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">
+              {product.productSubCategory.name}
+            </span>
+          </div>
 
-          <p className="text-sm text-gray-600 mt-2">
-            {product.shortDescription}
-          </p>
+          {product.shortDescription && (
+            <p className="text-gray-500 mb-4 text-sm">
+              {product.shortDescription}
+            </p>
+          )}
 
-          <div className="mt-4 flex justify-between items-center">
+          <div className="text-xs text-gray-500 mb-4">
+            Min. Quantity: {product.minimumQuantity}
+          </div>
+
+          <div className="flex justify-between items-center pt-4 border-t">
             <span className="text-emerald-600 font-bold text-xl">
               {formatPrice(product.price)}
             </span>
 
             <button
               onClick={() => setIsContactModalOpen(true)}
-              className="bg-emerald-600 text-white px-4 py-2 rounded-lg"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg"
             >
-              Enquire
+              Enquire Now
             </button>
           </div>
         </div>
@@ -165,71 +228,175 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       {/* ---------------- Contact Modal ---------------- */}
       {isContactModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl w-full max-w-lg relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6 relative">
             <button
               onClick={() => setIsContactModalOpen(false)}
-              className="absolute top-4 right-4"
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
             >
-              <X />
+              <X className="w-5 h-5" />
             </button>
 
-            <h2 className="text-xl font-bold mb-4">
-              Inquire about {product.name}
-            </h2>
-
-            {status && (
-              <p
-                className={`mb-3 text-sm ${
-                  status.type === "success"
-                    ? "text-green-600"
-                    : "text-red-600"
-                }`}
-              >
-                {status.message}
-              </p>
-            )}
+            <h2 className="text-2xl font-bold mb-4">Enquire Now</h2>
 
             <form onSubmit={handleContactSubmit} className="space-y-4">
-              <input
-                name="name"
-                placeholder="Name"
-                value={formData.name}
-                onChange={handleContactChange}
-                required
-                className="w-full border p-2 rounded"
-              />
-              <input
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleContactChange}
-                required
-                className="w-full border p-2 rounded"
-              />
-              <input
-                name="contact"
-                placeholder="Contact"
-                value={formData.contact}
-                onChange={handleContactChange}
-                className="w-full border p-2 rounded"
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  name="name"
+                  value={formData.name}
+                  onChange={handleContactChange}
+                  placeholder="Name"
+                  className="border rounded-lg px-3 py-2 w-full"
+                />
+                <input
+                  name="email"
+                  value={formData.email}
+                  onChange={handleContactChange}
+                  placeholder="Email"
+                  className="border rounded-lg px-3 py-2 w-full"
+                />
+                <input
+                  name="contact"
+                  value={formData.contact}
+                  onChange={handleContactChange}
+                  placeholder="Contact Number"
+                  className="border rounded-lg px-3 py-2 w-full"
+                />
+                <input
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleContactChange}
+                  placeholder="Subject"
+                  className="border rounded-lg px-3 py-2 w-full"
+                />
+              </div>
+
               <textarea
                 name="message"
-                placeholder="Message"
                 value={formData.message}
                 onChange={handleContactChange}
-                required
-                className="w-full border p-2 rounded"
+                placeholder="Message"
+                className="border rounded-lg px-3 py-2 w-full h-28"
               />
+
+              {status && (
+                <div
+                  className={`p-2 rounded-md ${
+                    status.type === "success"
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {status.message}
+                </div>
+              )}
+
               <button
                 type="submit"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg"
                 disabled={isLoading}
-                className="bg-emerald-600 text-white px-4 py-2 rounded"
               >
                 {isLoading ? "Sending..." : "Send"}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ---------------- Product Details Modal ---------------- */}
+      {isDetailsModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white w-full max-w-4xl rounded-xl shadow-lg relative overflow-hidden">
+            <button
+              onClick={() => setIsDetailsModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+              <div>
+                <div className="w-full h-72 bg-gray-50 flex items-center justify-center rounded-lg overflow-hidden mb-4">
+                  <img
+                    src={mainImage}
+                    alt={product.name}
+                    className="max-h-full max-w-full object-contain"
+                  />
+                </div>
+
+                {thumbnails.length > 0 && (
+                  <div className="flex gap-2 flex-wrap">
+                    {thumbnails.map((img, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleThumbnailClick(img)}
+                        className="w-16 h-16 border rounded-lg overflow-hidden hover:ring-2 ring-emerald-500"
+                      >
+                        <img
+                          src={img}
+                          alt="thumb"
+                          className="w-full h-full object-contain"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-col">
+                <h2 className="text-2xl font-bold text-gray-900 mb-1">
+                  {product.name}
+                </h2>
+
+                <span className="text-sm text-emerald-600 mb-3">
+                  {product.productSubCategory?.name}
+                </span>
+
+                {/* ====== ADDED DETAILS ====== */}
+                {product.shortDescription && (
+                  <p className="text-gray-500 mb-4 text-sm">
+                    {product.shortDescription}
+                  </p>
+                )}
+
+                {product.longDescription && (
+                  <p className="text-gray-500 mb-4 text-sm">
+                    {product.longDescription}
+                  </p>
+                )}
+
+                <div className="text-sm text-gray-500 mb-4">
+                  <span className="font-medium text-gray-800">
+                    Type of Plant:
+                  </span>{" "}
+                  {product.productSubCategory?.productMainCategory?.name}
+                </div>
+                {/* ========================== */}
+
+                <div className="text-sm text-gray-500 mb-4">
+                  Minimum Order Quantity:{" "}
+                  <span className="font-medium text-gray-800">
+                    {product.minimumQuantity}
+                  </span>
+                </div>
+
+                <div className="mt-auto flex items-center justify-between">
+                  <span className="text-emerald-600 font-bold text-2xl">
+                    {formatPrice(product.price)}
+                  </span>
+
+                  <button
+                    onClick={() => {
+                      setIsDetailsModalOpen(false);
+                      setIsContactModalOpen(true);
+                    }}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg"
+                  >
+                    Enquire Now
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

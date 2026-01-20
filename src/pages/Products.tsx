@@ -218,36 +218,44 @@ const Products = () => {
               </div>
 
               {/* Sub Categories */}
-              <button
-                onClick={() => {
-                  setSelectedSubCategory("all");
-                  setCurrentPage(0);
-                }}
-                className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                  selectedSubCategory === "all"
-                    ? "bg-cyan-100 text-cyan-700 font-medium"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                All Sub Categories
-              </button>
-
-              {filteredSubCategories.map((subCategory) => (
-                <button
-                  key={subCategory.productSubCategoryId}
-                  onClick={() => {
-                    setSelectedSubCategory(subCategory.productSubCategoryId);
-                    setCurrentPage(0);
-                  }}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                    selectedSubCategory === subCategory.productSubCategoryId
-                      ? "bg-cyan-100 text-cyan-700 font-medium"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  {subCategory.name}
-                </button>
-              ))}
+              {filteredSubCategories.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-3">
+                    Sub Categories
+                  </h4>
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => setSelectedSubCategory("all")}
+                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                        selectedSubCategory === "all"
+                          ? "bg-cyan-100 text-cyan-700 font-medium"
+                          : "text-gray-700 hover:bg-gray-100"
+                      }`}
+                    >
+                      All Sub Categories
+                    </button>
+                    {filteredSubCategories.map((subCategory) => (
+                      <button
+                        key={subCategory.productSubCategoryId}
+                        onClick={() => {
+                          setSelectedSubCategory(
+                            subCategory.productSubCategoryId
+                          );
+                          setCurrentPage(0);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                          selectedSubCategory ===
+                          subCategory.productSubCategoryId
+                            ? "bg-cyan-100 text-cyan-700 font-medium"
+                            : "text-gray-700 hover:bg-gray-100"
+                        }`}
+                      >
+                        {subCategory.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -314,6 +322,7 @@ const Products = () => {
                     />
                   ))}
                 </div>
+
                 {/* Pagination */}
                 <div className="flex justify-center items-center mt-8 space-x-4">
                   <button
