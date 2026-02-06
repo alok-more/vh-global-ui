@@ -60,7 +60,7 @@ const Contact = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     setFormData({
       ...formData,
@@ -72,9 +72,7 @@ const Contact = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-xl shadow-sm p-8 mb-8 text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Contact Us
-          </h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
           <p className="text-xl text-gray-500">
             Get in touch with our aquascaping experts
           </p>
@@ -102,16 +100,16 @@ const Contact = () => {
 
                 <div className="flex items-start space-x-4">
                   <Mail className="w-6 h-6 text-yellow-600" />
-                  <p className="text-gray-500">
-                    vhnglobaltrader@gmail.com
-                  </p>
+                  <p className="text-gray-500">vhnglobaltrader@gmail.com</p>
                 </div>
 
                 <div className="flex items-start space-x-4">
                   <Clock className="w-6 h-6 text-green-600" />
                   <p className="text-gray-500">
-                    Mon–Fri: 8:00–17:00<br />
-                    Sat: 9:00–15:00<br />
+                    Mon–Fri: 8:00–17:00
+                    <br />
+                    Sat: 9:00–15:00
+                    <br />
                     Sun: Closed
                   </p>
                 </div>
@@ -120,17 +118,21 @@ const Contact = () => {
           </div>
 
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-lg p-8">
-              <h2 className="text-2xl font-extrabold text-gray-900 mb-6">
+            <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
                 Send us a Message
               </h2>
+              <p className="text-gray-600 mb-8">
+                We’d love to hear from you. Fill out the form and we’ll get back
+                shortly.
+              </p>
 
               {status && (
                 <div
-                  className={`mb-6 p-4 rounded-lg ${
+                  className={`mb-6 rounded-lg px-5 py-4 text-sm font-medium ${
                     status.type === "success"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                      : "bg-red-50 text-red-700 border border-red-200"
                   }`}
                 >
                   {status.message}
@@ -147,13 +149,14 @@ const Contact = () => {
                     placeholder="Full Name"
                     className="input"
                   />
+
                   <input
                     name="email"
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    placeholder="Email"
+                    placeholder="Email Address"
                     className="input"
                   />
                 </div>
@@ -171,9 +174,11 @@ const Contact = () => {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="input"
+                  className="input text-gray-700"
                 >
-                  <option value="">Select subject</option>
+                  <option value="" disabled>
+                    Select a subject
+                  </option>
                   <option value="product-info">Product Information</option>
                   <option value="technical-support">Technical Support</option>
                   <option value="dealer-inquiry">Dealer Inquiry</option>
@@ -186,15 +191,19 @@ const Contact = () => {
                   onChange={handleChange}
                   required
                   rows={6}
-                  placeholder="Your message..."
+                  placeholder="Write your message here..."
                   className="input resize-none"
                 />
 
                 <button
                   type="submit"
-                  className="bg-emerald-600 text-white px-8 py-4 rounded-lg flex items-center"
+                  className="inline-flex items-center justify-center rounded-lg bg-emerald-600 
+        px-8 py-4 font-semibold text-white shadow-md transition 
+        hover:bg-emerald-700 hover:shadow-lg 
+        focus:outline-none focus:ring-2 focus:ring-emerald-300"
                 >
-                  Send Message <Send className="ml-2 w-5 h-5" />
+                  Send Message
+                  <Send className="ml-2 h-5 w-5" />
                 </button>
               </form>
             </div>
