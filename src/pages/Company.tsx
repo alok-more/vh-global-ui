@@ -53,30 +53,6 @@ const Company = () => {
     },
   ];
 
-  const team = [
-    {
-      img: "https://images.pexels.com/photos/3212513/pexels-photo-3212513.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&fit=crop",
-      alt: "CEO",
-      name: "Rajesh Sharma",
-      role: "Chief Executive Officer",
-      desc: "Leading VHN Global's mission to connect India's green treasures with the world, with over 20 years in agriculture and exports.",
-    },
-    {
-      img: "https://images.pexels.com/photos/1078736/pexels-photo-1078736.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&fit=crop",
-      alt: "Head of Operations",
-      name: "Priya Patel",
-      role: "Head of Operations",
-      desc: "Ensuring quality control and sustainable farming practices across our nurseries and export operations.",
-    },
-    {
-      img: "https://images.pexels.com/photos/1123982/pexels-photo-1123982.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&fit=crop",
-      alt: "Head of International Sales",
-      name: "Vikram Singh",
-      role: "Head of International Sales",
-      desc: "Expanding VHN Global's reach across international markets while maintaining our commitment to quality and sustainability.",
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}

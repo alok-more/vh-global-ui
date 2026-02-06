@@ -168,13 +168,13 @@ const Home = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-4xl font-bold text-gray-900 mb-6 text-center">
-                55 Years of
-                <span className="text-emerald-700 block">Innovation</span>
+                From Our Nurseries 
+                <span className="text-emerald-700 block">to the World</span>
               </h2>
               <p className="text-lg text-gray-500 mb-8 leading-relaxed text-center">
-                At VHN Global, we bring you premium nursery and farming plants—delivered across India and worldwide—making greenery accessible, sustainable, and beautiful for every space.
+                VHN Global delivers premium nursery and farming plants across India and international markets—making greenery accessible everywhere. <br /> We specialize in live plants that bring freshness, beauty, and sustainability to homes, farms, and landscapes. <br /> From ornamental plants to farming solutions, VHN Global is your reliable source for healthy, export-quality greenery.
               </p>
-
+{/* 
               <div className="grid sm:grid-cols-3 gap-6 mb-8">
                 <div className="text-center">
                   <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center mx-auto mb-3">
@@ -199,7 +199,7 @@ const Home = () => {
                   <div className="font-bold text-2xl text-yellow-600">60+</div>
                   <div className="text-sm text-gray-500">Countries</div>
                 </div>
-              </div>
+              </div> */}
 
               <div className="flex justify-center">
                 <Link
@@ -214,7 +214,7 @@ const Home = () => {
 
             <div className="relative">
               <img
-                src="https://images.pexels.com/photos/3212513/pexels-photo-3212513.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop"
+                src="/public/images/nursary-image.jpg"
                 alt="Professional Aquascaping"
                 className="w-full rounded-2xl shadow-2xl"
               />

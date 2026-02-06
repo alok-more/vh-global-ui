@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.input {
+  @apply w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-800 
+  placeholder-gray-400 shadow-sm transition 
+  focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
