@@ -237,8 +237,20 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </button>
 
             <h2 className="text-2xl font-bold mb-4">Enquire Now</h2>
+            
+              {status && (
+                <div
+                  className={`p-2 rounded-md ${
+                    status.type === "success"
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {status.message}
+                </div>
+              )}
 
-            <form onSubmit={handleContactSubmit} className="space-y-4">
+            <form onSubmit={handleContactSubmit} className="space-y-4 mt-2">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
                   name="name"
@@ -277,18 +289,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 placeholder="Message"
                 className="border rounded-lg px-3 py-2 w-full h-28"
               />
-
-              {status && (
-                <div
-                  className={`p-2 rounded-md ${
-                    status.type === "success"
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  {status.message}
-                </div>
-              )}
 
               <button
                 type="submit"
