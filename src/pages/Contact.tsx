@@ -11,6 +11,15 @@ const Contact = () => {
     message: "",
   });
 
+  const subjects = [
+    { value: "product-info", label: "Product Information" },
+    { value: "technical-support", label: "Technical Support" },
+    { value: "dealer-inquiry", label: "Dealer Inquiry" },
+    { value: "consultation", label: "Consultation" },
+  ];
+
+  const [open, setOpen] = useState(false);
+
   const [status, setStatus] = useState<{
     type: "success" | "error";
     message: string;
@@ -169,21 +178,47 @@ const Contact = () => {
                   className="input"
                 />
 
-                <select
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  required
-                  className="input text-gray-700"
-                >
-                  <option value="" disabled>
-                    Select a subject
-                  </option>
-                  <option value="product-info">Product Information</option>
-                  <option value="technical-support">Technical Support</option>
-                  <option value="dealer-inquiry">Dealer Inquiry</option>
-                  <option value="consultation">Consultation</option>
-                </select>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setOpen(!open)}
+                    className="
+      input flex items-center justify-between
+      text-sm sm:text-base
+      py-3 sm:py-3.5 lg:py-4
+    "
+                  >
+                    {subjects.find((s) => s.value === formData.subject)
+                      ?.label || "Select a subject"}
+                    <span className="ml-2 text-gray-400">▼</span>
+                  </button>
+
+                  {open && (
+                    <ul
+                      className="
+        absolute z-50 mt-2 w-full rounded-lg
+        border border-gray-200 bg-white shadow-lg
+        max-h-60 overflow-y-auto
+      "
+                    >
+                      {subjects.map((item) => (
+                        <li
+                          key={item.value}
+                          onClick={() => {
+                            setFormData({ ...formData, subject: item.value });
+                            setOpen(false);
+                          }}
+                          className="
+            cursor-pointer px-4 py-3 text-sm sm:text-base
+            hover:bg-emerald-50
+          "
+                        >
+                          {item.label}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
 
                 <textarea
                   name="message"
