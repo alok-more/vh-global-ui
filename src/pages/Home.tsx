@@ -214,7 +214,7 @@ const Home = () => {
 
             <div className="relative">
               <img
-                src="/public/images/nursary-image.jpg"
+                src="/images/nursary-image.jpg"
                 alt="Professional Aquascaping"
                 className="w-full rounded-2xl shadow-2xl"
               />
