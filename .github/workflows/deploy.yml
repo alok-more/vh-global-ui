@@ -21,11 +21,11 @@ jobs:
             
             cat > .env.production << 'EOF'
             VITE_APP_SCRIPT_EXCEL_URL=https://script.google.com/macros/s/AKfycbx4D2ShoFE7qFiV_iY_coNKR3Vxj0mNsyok4he6ccOlZrfHU_mzodTrIGbWT608CfXf/exec
-            VITE_BACKEND_URL=https://vhnglobal.in/
+            VITE_BACKEND_URL=https://vhnglobal.com/
             EOF
             
             npm install
             npm run build
-            sudo cp -r dist/* /var/www/vhnglobal.in/
-            sudo chown -R www-data:www-data /var/www/vhnglobal.in
+            sudo cp -r dist/* /var/www/vhnglobal.com/
+            sudo chown -R www-data:www-data /var/www/vhnglobal.com
             echo "Frontend deployed successfully"
