@@ -1,11 +1,6 @@
-import {
-  Mail,
-  Phone,
-  MapPin,
-} from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMainCategories } from "../hooks/useProducts";
-
 
 const Footer = () => {
   const { data: mainCategoriesData } = useMainCategories();
@@ -20,7 +15,6 @@ const Footer = () => {
             <Link to="/" className="flex items-center space-x-2">
               <img
                 src="/images/logo-light.png"
-
                 alt="VHN Global Logo"
                 className="h-16 w-auto"
                 // fetchpriority="high"
@@ -28,14 +22,16 @@ const Footer = () => {
             </Link>
             {/* </div> */}
             <p className="text-gray-300 mb-6 leading-relaxed">
-              VHN Global delivers premium nursery and farming plants across India and international markets. With a focus on quality, sustainability, and trust, we make greenery accessible for homes, farms, and landscapes worldwide. 
+              VHN Global delivers premium nursery and farming plants across
+              India and international markets. With a focus on quality,
+              sustainability, and trust, we make greenery accessible for homes,
+              farms, and landscapes worldwide.
             </p>
-            <div className="flex space-x-4">
-            </div>
+            <div className="flex space-x-4"></div>
           </div>
 
           {/* Products */}
-           <div>
+          <div>
             <h4 className="text-lg font-semibold mb-6">Products</h4>
             <ul className="space-y-3">
               {mainCategoriesData?.data?.map((category) => (
@@ -63,13 +59,16 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                <span className="text-gray-300 text-sm">+91-727600399</span>
+                <span className="text-gray-300 text-sm">+91-7276800399</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                <span className="text-gray-300 text-sm">
+                <a
+                  href="mailto:vhnglobaltrader@gmail.com?subject=Business Inquiry&body=Hello VHN Global Team,"
+                  className="text-gray-300 text-sm hover:underline"
+                >
                   vhnglobaltrader@gmail.com
-                </span>
+                </a>
               </div>
             </div>
 
