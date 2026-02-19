@@ -16,16 +16,33 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT }}
           script: |
+            set -e
+
             cd /opt/apps/frontend
-            git pull origin main
-            
+
+            echo "🔄 Fetching latest code..."
+            git fetch origin
+
+            echo "⚠️ Resetting local changes..."
+            git reset --hard origin/main
+
+            echo "📝 Writing environment variables..."
             cat > .env.production << 'EOF'
             VITE_APP_SCRIPT_EXCEL_URL=https://script.google.com/macros/s/AKfycbx4D2ShoFE7qFiV_iY_coNKR3Vxj0mNsyok4he6ccOlZrfHU_mzodTrIGbWT608CfXf/exec
             VITE_BACKEND_URL=https://vhnglobal.com/
             EOF
-            
+
+            echo "📦 Installing dependencies..."
             npm install
+
+            echo "🏗️ Building frontend..."
             npm run build
+
+            echo "🚀 Deploying build to web root..."
+            sudo rm -rf /var/www/vhnglobal.com/*
             sudo cp -r dist/* /var/www/vhnglobal.com/
+
+            echo "🔐 Fixing permissions..."
             sudo chown -R www-data:www-data /var/www/vhnglobal.com
-            echo "Frontend deployed successfully"
+
+            echo "✅ Frontend deployed successfully"
