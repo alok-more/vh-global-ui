@@ -77,6 +77,13 @@ const Contact = () => {
     });
   };
 
+  const istTime = new Date().toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -104,7 +111,7 @@ const Contact = () => {
 
                 <div className="flex items-start space-x-4">
                   <Phone className="w-6 h-6 text-cyan-600" />
-                  <p className="text-gray-500">+91-727600399</p>
+                  <p className="text-gray-500">+91-7276800399</p>
                 </div>
 
                 <div className="flex items-start space-x-4">
@@ -115,11 +122,11 @@ const Contact = () => {
                 <div className="flex items-start space-x-4">
                   <Clock className="w-6 h-6 text-green-600" />
                   <p className="text-gray-500">
-                    Mon–Fri: 8:00–17:00
-                    <br />
-                    Sat: 9:00–15:00
+                    Mon–Sat: 9:00 AM – 6:00 PM (IST)
                     <br />
                     Sun: Closed
+                    <br />
+                    Current IST Time: {istTime}
                   </p>
                 </div>
               </div>
