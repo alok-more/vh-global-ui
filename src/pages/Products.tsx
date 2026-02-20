@@ -78,7 +78,7 @@ const Products = () => {
       filtered = filtered.filter(
         (product) =>
           product.productSubCategory.productMainCategory
-            .productMainCategoryId === selectedMainCategory
+            .productMainCategoryId === selectedMainCategory,
       );
     }
 
@@ -86,7 +86,7 @@ const Products = () => {
       filtered = filtered.filter(
         (product) =>
           product.productSubCategory.productSubCategoryId ===
-          selectedSubCategory
+          selectedSubCategory,
       );
     }
 
@@ -96,7 +96,7 @@ const Products = () => {
           product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           product.shortDescription
             ?.toLowerCase()
-            .includes(searchTerm.toLowerCase())
+            .includes(searchTerm.toLowerCase()),
       );
     }
 
@@ -118,7 +118,7 @@ const Products = () => {
     return subCategoriesData.data.content.filter(
       (subCat) =>
         subCat.productMainCategory.productMainCategoryId ===
-        selectedMainCategory
+        selectedMainCategory,
     );
   }, [subCategoriesData, selectedMainCategory]);
 
@@ -178,14 +178,16 @@ const Products = () => {
             <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
               <div className="flex items-center mb-4">
                 <Filter className="w-5 h-5 text-gray-500 mr-2" />
-                <h3 className="font-semibold text-gray-900">Categories</h3>
+                <h3 className="font-semibold text-gray-900">
+                  Explore By Categories
+                </h3>
               </div>
 
               {/* Main Categories */}
               <div className="mb-6">
-                <h4 className="text-sm font-medium text-gray-700 mb-3">
+                {/* <h4 className="text-sm font-medium text-gray-700 mb-3">
                   Main Categories
-                </h4>
+                </h4> */}
                 <div className="space-y-2">
                   <button
                     onClick={() => setSelectedMainCategory("all")}
@@ -197,12 +199,15 @@ const Products = () => {
                   >
                     All Categories
                   </button>
+
                   {mainCategoriesData?.data?.map((category) => (
                     <button
                       key={category.productMainCategoryId}
-                      onClick={() =>
-                        setSelectedMainCategory(category.productMainCategoryId)
-                      }
+                      onClick={() => {
+                        setSelectedMainCategory(category.productMainCategoryId);
+                        setSelectedSubCategory("all");
+                        setCurrentPage(0);
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                         selectedMainCategory === category.productMainCategoryId
                           ? "bg-emerald-100 text-emerald-700 font-medium"
@@ -219,8 +224,14 @@ const Products = () => {
               {filteredSubCategories.length > 0 && (
                 <div>
                   <h4 className="text-sm font-medium text-gray-700 mb-3">
-                    Sub Categories
+                    {selectedMainCategory === "all"
+                      ? "Selected Main Category"
+                      : mainCategoriesData?.data?.find(
+                          (cat) =>
+                            cat.productMainCategoryId === selectedMainCategory,
+                        )?.name}
                   </h4>
+
                   <div className="space-y-2">
                     <button
                       onClick={() => setSelectedSubCategory("all")}
@@ -232,12 +243,13 @@ const Products = () => {
                     >
                       All Sub Categories
                     </button>
+
                     {filteredSubCategories.map((subCategory) => (
                       <button
                         key={subCategory.productSubCategoryId}
                         onClick={() => {
                           setSelectedSubCategory(
-                            subCategory.productSubCategoryId
+                            subCategory.productSubCategoryId,
                           );
                           setCurrentPage(0);
                         }}
@@ -276,6 +288,7 @@ const Products = () => {
                 >
                   <Grid className="w-5 h-5" />
                 </button>
+
                 <button
                   onClick={() => setViewMode("list")}
                   className={`p-2 rounded-lg transition-colors ${
@@ -332,10 +345,12 @@ const Products = () => {
                   >
                     Previous
                   </button>
+
                   <span className="text-gray-500">
                     Page {currentPage + 1} of{" "}
                     {Math.ceil(filteredProducts.length / pageSize)}
                   </span>
+
                   <button
                     className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 disabled:opacity-50"
                     onClick={() => setCurrentPage((prev) => prev + 1)}
