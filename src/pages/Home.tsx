@@ -20,7 +20,7 @@ const Home = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative h-screen bg-gradient-to-br from-emerald-900 via-emerald-800 to-cyan-900 flex items-center">
+      <section className="relative h-screen bg-gradient-to-br from-emerald-900 via-emerald-800 to-cyan-900 flex items-center pt-[98px]">
         <div className="absolute inset-0 bg-black/30"></div>
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -66,7 +66,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-heading font-black text-gray-900 mb-3">
-              Why Choose VHN Global Trader
+              Why Choose VHN Global
             </h2>
             <p className="text-xl text-gray-500 max-w-3xl mx-auto">
               Over 55 years of expertise in aquarium technology and plant

@@ -66,8 +66,7 @@ const Header = () => {
   }, [hoverTimeout, categoriesTimeout]);
 
   return (
-    <header className="bg-white/40 shadow-sm relative z-40 backdrop-blur-md">
-      {/* Top Bar */}
+<header className="bg-white shadow-sm fixed top-0 left-0 w-full z-50 backdrop-blur-md">      {/* Top Bar */}
       {/* <div className="bg-emerald-800 text-white py-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center text-sm">
           <div className="flex space-x-6">

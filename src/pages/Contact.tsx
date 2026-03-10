@@ -85,7 +85,7 @@ const Contact = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-8 pt-[130px]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-xl shadow-sm p-8 mb-8 text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>

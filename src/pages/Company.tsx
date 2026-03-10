@@ -54,7 +54,7 @@ const Company = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pt-[120px]">
       {/* Hero Section */}
       <section className="relative py-20 bg-emerald-800">
         <div

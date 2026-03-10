@@ -24,6 +24,7 @@ const Products = () => {
   const pageSize = 6;
 
   const [searchParams] = useSearchParams();
+  const [expandedMainCat, setExpandedMainCat] = useState<string | null>(null);
 
   // Sync with query params
   useEffect(() => {
@@ -108,19 +109,19 @@ const Products = () => {
     return filteredProducts.slice(start, start + pageSize);
   }, [filteredProducts, currentPage, pageSize]);
 
-  const filteredSubCategories = useMemo(() => {
-    if (!subCategoriesData?.data?.content) return [];
+  // const filteredSubCategories = useMemo(() => {
+  //   if (!subCategoriesData?.data?.content) return [];
 
-    if (selectedMainCategory === "all") {
-      return subCategoriesData.data.content;
-    }
+  //   if (selectedMainCategory === "all") {
+  //     return subCategoriesData.data.content;
+  //   }
 
-    return subCategoriesData.data.content.filter(
-      (subCat) =>
-        subCat.productMainCategory.productMainCategoryId ===
-        selectedMainCategory,
-    );
-  }, [subCategoriesData, selectedMainCategory]);
+  //   return subCategoriesData.data.content.filter(
+  //     (subCat) =>
+  //       subCat.productMainCategory.productMainCategoryId ===
+  //       selectedMainCategory,
+  //   );
+  // }, [subCategoriesData, selectedMainCategory]);
 
   if (mainCategoriesLoading || productsLoading) {
     return (
@@ -145,16 +146,16 @@ const Products = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-8  pt-[130px]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="bg-white rounded-xl shadow-sm p-8 mb-8">
           <h1 className="text-4xl font-heading font-extrabold text-gray-900 mb-3">
-            Our Products
+            Explore Products
           </h1>
-          <p className="text-xl text-gray-500">
+          {/* <p className="text-xl text-gray-500">
             Professional aquascaping solutions for every need
-          </p>
+          </p> */}
 
           {/* Search Bar */}
           <div className="mt-6 relative max-w-md">
@@ -183,89 +184,101 @@ const Products = () => {
                 </h3>
               </div>
 
-              {/* Main Categories */}
-              <div className="mb-6">
-                {/* <h4 className="text-sm font-medium text-gray-700 mb-3">
-                  Main Categories
-                </h4> */}
-                <div className="space-y-2">
-                  <button
-                    onClick={() => setSelectedMainCategory("all")}
-                    className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                      selectedMainCategory === "all"
-                        ? "bg-emerald-100 text-emerald-700 font-medium"
-                        : "text-gray-700 hover:bg-gray-100"
-                    }`}
-                  >
-                    All Categories
-                  </button>
+              {/* All Products */}
+              <button
+                onClick={() => {
+                  setSelectedMainCategory("all");
+                  setSelectedSubCategory("all");
+                  setExpandedMainCat(null);
+                  setCurrentPage(0);
+                }}
+                className={`w-full text-left px-3 py-2 rounded-lg transition-colors font-medium mb-4 ${
+                  selectedMainCategory === "all"
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                All Products
+              </button>
 
-                  {mainCategoriesData?.data?.map((category) => (
-                    <button
-                      key={category.productMainCategoryId}
-                      onClick={() => {
-                        setSelectedMainCategory(category.productMainCategoryId);
-                        setSelectedSubCategory("all");
-                        setCurrentPage(0);
-                      }}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                        selectedMainCategory === category.productMainCategoryId
-                          ? "bg-emerald-100 text-emerald-700 font-medium"
-                          : "text-gray-700 hover:bg-gray-100"
-                      }`}
-                    >
-                      {category.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <div className="space-y-6">
+                {mainCategoriesData?.data?.map((mainCat) => {
+                  const subCats =
+                    subCategoriesData?.data?.content.filter(
+                      (sub) =>
+                        sub.productMainCategory.productMainCategoryId ===
+                        mainCat.productMainCategoryId,
+                    ) || [];
 
-              {/* Sub Categories */}
-              {filteredSubCategories.length > 0 && (
-                <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-3">
-                    {selectedMainCategory === "all"
-                      ? "Selected Main Category"
-                      : mainCategoriesData?.data?.find(
-                          (cat) =>
-                            cat.productMainCategoryId === selectedMainCategory,
-                        )?.name}
-                  </h4>
+                  const isExpanded =
+                    expandedMainCat === mainCat.productMainCategoryId;
 
-                  <div className="space-y-2">
-                    <button
-                      onClick={() => setSelectedSubCategory("all")}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                        selectedSubCategory === "all"
-                          ? "bg-cyan-100 text-cyan-700 font-medium"
-                          : "text-gray-700 hover:bg-gray-100"
-                      }`}
-                    >
-                      All Sub Categories
-                    </button>
+                  const visibleSubCats = isExpanded
+                    ? subCats
+                    : subCats.slice(0, 4);
 
-                    {filteredSubCategories.map((subCategory) => (
+                  return (
+                    <div key={mainCat.productMainCategoryId}>
+                      {/* Main Category */}
                       <button
-                        key={subCategory.productSubCategoryId}
                         onClick={() => {
-                          setSelectedSubCategory(
-                            subCategory.productSubCategoryId,
+                          setSelectedMainCategory(
+                            mainCat.productMainCategoryId,
                           );
+                          setSelectedSubCategory("all");
                           setCurrentPage(0);
                         }}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                          selectedSubCategory ===
-                          subCategory.productSubCategoryId
-                            ? "bg-cyan-100 text-cyan-700 font-medium"
+                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors font-medium ${
+                          selectedMainCategory === mainCat.productMainCategoryId
+                            ? "bg-emerald-100 text-emerald-700"
                             : "text-gray-700 hover:bg-gray-100"
                         }`}
                       >
-                        {subCategory.name}
+                        {mainCat.name}
                       </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+
+                      {/* Sub Categories */}
+                      <div className="ml-3 mt-2 space-y-1">
+                        {visibleSubCats.map((sub) => (
+                          <button
+                            key={sub.productSubCategoryId}
+                            onClick={() => {
+                              setSelectedMainCategory(
+                                mainCat.productMainCategoryId,
+                              );
+                              setSelectedSubCategory(sub.productSubCategoryId);
+                              setCurrentPage(0);
+                            }}
+                            className={`w-full text-left px-3 py-1 rounded-lg transition-colors text-md ${
+                              selectedSubCategory === sub.productSubCategoryId
+                                ? "bg-cyan-100 text-cyan-700 font-medium"
+                                : "text-gray-700 hover:bg-gray-100"
+                            }`}
+                          >
+                            {sub.name}
+                          </button>
+                        ))}
+
+                        {/* See All / See Less */}
+                        {subCats.length > 4 && (
+                          <button
+                            onClick={() =>
+                              setExpandedMainCat(
+                                isExpanded
+                                  ? null
+                                  : mainCat.productMainCategoryId,
+                              )
+                            }
+                            className="w-full text-left px-3 py-1 text-sm text-emerald-600 hover:underline"
+                          >
+                            {isExpanded ? "See Less" : "See All"}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
