@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Filter, Grid, List, Search, Package } from "lucide-react";
+import { Filter, Grid, Search, Package } from "lucide-react";
 import {
   useMainCategories,
   useSubCategories,

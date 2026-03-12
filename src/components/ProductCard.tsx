@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Eye, X } from "lucide-react";
 import { ProductResponse } from "../types/api";
 import { productApi } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   product: ProductResponse;
@@ -31,6 +32,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
     type: "success" | "error";
     message: string;
   }>(null);
+
+  const navigate = useNavigate();
 
   /* ---------------- Currency ---------------- */
   const getCurrencyFromTimeZone = () => {
@@ -181,11 +184,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
-              onClick={() =>
-                onViewDetails
-                  ? onViewDetails(product)
-                  : setIsDetailsModalOpen(true)
-              }
+              onClick={() => navigate(`/products/${product.productId}`)}
               className="bg-white/90 hover:bg-white p-2 rounded-lg shadow-lg"
             >
               <Eye className="w-4 h-4 text-gray-700" />
@@ -237,18 +236,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </button>
 
             <h2 className="text-2xl font-bold mb-4">Enquire Now</h2>
-            
-              {status && (
-                <div
-                  className={`p-2 rounded-md ${
-                    status.type === "success"
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  {status.message}
-                </div>
-              )}
+
+            {status && (
+              <div
+                className={`p-2 rounded-md ${
+                  status.type === "success"
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-red-100 text-red-700"
+                }`}
+              >
+                {status.message}
+              </div>
+            )}
 
             <form onSubmit={handleContactSubmit} className="space-y-4 mt-2">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
