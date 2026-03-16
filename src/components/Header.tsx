@@ -10,28 +10,33 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMegaMenuVisible, setIsMegaMenuVisible] = useState(false);
   const [isCategoriesMenuVisible, setIsCategoriesMenuVisible] = useState(false);
-  const [hoverTimeout, setHoverTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
-  const [categoriesTimeout, setCategoriesTimeout] = useState<ReturnType<typeof setTimeout> | null>(
-    null
-  );
+  const [hoverTimeout, setHoverTimeout] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
+  const [categoriesTimeout, setCategoriesTimeout] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
 
   // const { data: mainCategoriesData } = useMainCategories();
 
   const handleMegaMenuEnter = () => {
-    // Clear any existing timeout when user hovers
     if (hoverTimeout) {
       clearTimeout(hoverTimeout);
-      setHoverTimeout(null);
     }
+
+    setHoverTimeout(null);
     setIsMegaMenuVisible(true);
   };
 
   const handleMegaMenuLeave = () => {
-    // Set a delay before closing, but store the timeout so we can cancel it if needed
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+    }
+
     const timeoutId = setTimeout(() => {
       setIsMegaMenuVisible(false);
-      setHoverTimeout(null);
-    }, 150); // Reduced to 150ms for better UX
+    }, 400); // smoother closing
+
     setHoverTimeout(timeoutId);
   };
 
@@ -66,7 +71,9 @@ const Header = () => {
   }, [hoverTimeout, categoriesTimeout]);
 
   return (
-<header className="bg-white shadow-sm fixed top-0 left-0 w-full z-50 backdrop-blur-md">      {/* Top Bar */}
+    <header className="bg-white shadow-sm fixed top-0 left-0 w-full z-50 backdrop-blur-md">
+      {" "}
+      {/* Top Bar */}
       {/* <div className="bg-emerald-800 text-white py-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center text-sm">
           <div className="flex space-x-6">
@@ -81,7 +88,6 @@ const Header = () => {
           </div>
         </div>
       </div> */}
-
       {/* Main Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">

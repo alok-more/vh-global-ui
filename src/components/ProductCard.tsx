@@ -194,7 +194,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         <div className="p-6 flex-1 flex flex-col">
           <div className="flex items-start justify-between mb-2">
-            <h3 className="font-bold text-lg text-gray-900">{product.name}</h3>
+            <h3
+              onClick={() => navigate(`/products/${product.productId}`)}
+              className="font-bold text-lg text-gray-900 cursor-pointer hover:text-emerald-600 transition-colors"
+            >
+              {product.name}
+            </h3>
             <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">
               {product.productSubCategory.name}
             </span>
